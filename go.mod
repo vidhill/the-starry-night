@@ -1,3 +1,3 @@
-module github.com/vidhill/redesigned-chainsaw
+module github.com/vidhill/the-starry-night
 
 go 1.17
