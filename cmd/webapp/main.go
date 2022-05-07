@@ -29,6 +29,8 @@ func main() {
 	// start server
 	port := configService.GetString("PORT")
 
+	log.Println("listening on port", port)
+
 	err := http.ListenAndServe(":"+port, mux)
 
 	if err != nil {
