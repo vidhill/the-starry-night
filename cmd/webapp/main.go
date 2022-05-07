@@ -12,7 +12,7 @@ func main() {
 
 	// wiring
 	configService := service.NewConfigService(domain.NewViperConfig())
-	loggerService := service.NewLoggerService(domain.NewDefaultLogger())
+	loggerService := service.NewLoggerService(domain.NewStandardLogger())
 	dh := handlers.NewHandlers()
 
 	mux := http.NewServeMux()
