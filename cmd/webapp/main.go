@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/vidhill/the-starry-night/domain"
@@ -13,6 +12,7 @@ func main() {
 
 	// wiring
 	configService := service.NewConfigService(domain.NewViperConfig())
+	loggerService := service.NewLoggerService(domain.NewDefaultLogger())
 	dh := handlers.NewHandlers()
 
 	mux := http.NewServeMux()
@@ -29,11 +29,11 @@ func main() {
 	// start server
 	port := configService.GetString("SERVER_PORT")
 
-	log.Println("listening on port", port)
+	loggerService.Info("listening on port", port)
 
 	err := http.ListenAndServe(":"+port, mux)
 
 	if err != nil {
-		log.Println("Error starting server", err.Error())
+		loggerService.Error("Error starting server", err.Error())
 	}
 }
