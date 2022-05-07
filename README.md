@@ -10,6 +10,14 @@
 | Build then run app                       | `make start` |
 | Watch files then auto-compile then start | `make dev`   |
 
+### Configuration
+
+The default values are loaded from `settings.yaml` and can be overridden by environment variables
+
+| Description                     | ENV VARIABLE  | DEFAULT VALUE |
+| ------------------------------- | ------------- | ------------- |
+| Port that application listen on | `SERVER_PORT` | `8080`        |
+
 # Prerequisites
 
 - `go` version `1.17`+
