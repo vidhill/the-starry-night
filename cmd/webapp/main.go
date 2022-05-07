@@ -27,7 +27,7 @@ func main() {
 	mux.HandleFunc("/foo", dh.GetFoo)
 
 	// start server
-	port := configService.GetString("PORT")
+	port := configService.GetString("SERVER_PORT")
 
 	log.Println("listening on port", port)
 
