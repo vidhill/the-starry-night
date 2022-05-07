@@ -19,7 +19,7 @@ func (s DefaultConfigService) GetBool(id string) bool {
 	return s.repo.GetBool(id)
 }
 
-func NewConfigService(repository domain.ConfigRepository) DefaultConfigService {
+func NewConfigService(repository domain.ConfigRepository) ConfigService {
 	return DefaultConfigService{
 		repo: repository,
 	}
