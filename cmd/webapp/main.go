@@ -15,19 +15,21 @@ func main() {
 	configService := service.NewConfigService(domain.NevViperConfig())
 	dh := handlers.NewHandlers()
 
+	mux := http.NewServeMux()
+
 	//
 	// route handlers
 	//
 	// health endpoint for kubernetes liveness probe
-	http.HandleFunc("/health", dh.Health)
+	mux.HandleFunc("/health", dh.Health)
 
-	http.HandleFunc("/hello", dh.Hello)
-	http.HandleFunc("/foo", dh.GetFoo)
+	mux.HandleFunc("/hello", dh.Hello)
+	mux.HandleFunc("/foo", dh.GetFoo)
 
 	// start server
 	port := configService.GetString("PORT")
 
-	err := http.ListenAndServe(":"+port, nil)
+	err := http.ListenAndServe(":"+port, mux)
 
 	if err != nil {
 		log.Println("Error starting server", err.Error())
