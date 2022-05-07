@@ -1,12 +1,13 @@
+PATH=cmd/webapp/main.go
 
 default: pre-build
-	go build cmd/webapp/main.go 
+	go build $(PATH)
 
 pre-build: 
 	rm -rf main
 
 start:
-	go run cmd/webapp/main.go 
+	go run $(PATH)
 
 dev:
 	air
