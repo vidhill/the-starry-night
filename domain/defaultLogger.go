@@ -1,25 +1,49 @@
 package domain
 
-import "log"
+import (
+	"log"
+	"os"
+)
 
-type DefaultLogger struct{}
+//
+// Wrapper around the standard lib logger; log
+//
 
-func (s DefaultLogger) Debug(v ...interface{}) {
-	log.Println(v...)
+const flags = log.LstdFlags | log.Lshortfile
+
+type StandardLogger struct {
+	DebugLogger *log.Logger
+	InfoLogger  *log.Logger
+	WarnLogger  *log.Logger
+	ErrorLogger *log.Logger
 }
 
-func (s DefaultLogger) Info(v ...interface{}) {
-	log.Println(v...)
+func (l StandardLogger) Debug(v ...interface{}) {
+	l.DebugLogger.Println(v...)
 }
 
-func (s DefaultLogger) Warn(v ...interface{}) {
-	log.Println(v...)
+func (l StandardLogger) Info(v ...interface{}) {
+	l.InfoLogger.Println(v...)
 }
 
-func (s DefaultLogger) Error(v ...interface{}) {
-	log.Println(v...)
+func (l StandardLogger) Warn(v ...interface{}) {
+	l.WarnLogger.Println(v...)
 }
 
-func NewDefaultLogger() DefaultLogger {
-	return DefaultLogger{}
+func (l StandardLogger) Error(v ...interface{}) {
+	l.ErrorLogger.Println(v...)
+}
+
+func makeLogger(prefix string) *log.Logger {
+	prefixWithSeparator := prefix + ": "
+	return log.New(os.Stdout, prefixWithSeparator, flags)
+}
+
+func NewStandardLogger() StandardLogger {
+	return StandardLogger{
+		DebugLogger: makeLogger("DEBUG"),
+		InfoLogger:  makeLogger("INFO"),
+		WarnLogger:  makeLogger("WARN"),
+		ErrorLogger: makeLogger("ERROR"),
+	}
 }
