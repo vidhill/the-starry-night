@@ -12,7 +12,7 @@ import (
 func main() {
 
 	// wiring
-	configService := service.NewConfigService(domain.NevViperConfig())
+	configService := service.NewConfigService(domain.NewViperConfig())
 	dh := handlers.NewHandlers()
 
 	mux := http.NewServeMux()
