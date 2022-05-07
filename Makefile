@@ -5,6 +5,9 @@ default: pre-build
 pre-build: 
 	rm -rf main
 
+start:
+	go run cmd/webapp/main.go 
+
 dev:
 	air
 
