@@ -13,7 +13,9 @@ func main() {
 	// wiring
 	configService := service.NewConfigService(domain.NewViperConfig())
 	loggerService := service.NewLoggerService(domain.NewStandardLogger())
-	dh := handlers.NewHandlers()
+	issService := service.NewISSService(domain.NewISSRepositoryRest(configService, loggerService))
+
+	dh := handlers.NewHandlers(issService)
 
 	mux := http.NewServeMux()
 
@@ -23,8 +25,7 @@ func main() {
 	// health endpoint for kubernetes liveness probe
 	mux.HandleFunc("/health", dh.Health)
 
-	mux.HandleFunc("/hello", dh.Hello)
-	mux.HandleFunc("/foo", dh.GetFoo)
+	mux.HandleFunc("/iss-position", dh.ISSPosition)
 
 	// start server
 	port := configService.GetString("SERVER_PORT")
