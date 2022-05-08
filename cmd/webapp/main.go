@@ -5,6 +5,7 @@ import (
 
 	"github.com/vidhill/the-starry-night/domain"
 	"github.com/vidhill/the-starry-night/handlers"
+	rest_api_repository "github.com/vidhill/the-starry-night/restapirepository"
 	"github.com/vidhill/the-starry-night/service"
 )
 
@@ -15,7 +16,7 @@ func main() {
 	loggerService := service.NewLoggerService(domain.NewStandardLogger())
 	httpService := service.NewHttpService(domain.NewDefaultHttpClient(loggerService))
 
-	ISSRepository := domain.NewISSRepositoryRest(configService, httpService, loggerService)
+	ISSRepository := rest_api_repository.NewISSRepositoryRest(configService, httpService, loggerService)
 
 	ISSService := service.NewISSLocationService(ISSRepository)
 

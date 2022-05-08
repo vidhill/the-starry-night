@@ -18,23 +18,31 @@
 >
 > Please write the service as you would your production-quality code, including documentation, unit tests, and other measures you would take to ensure the correctness of the code. Also have a think about what V2 of the application might look like.
 
+### TODO
+
+- [x] Add ISS location service
+- [x] Add Weather service
+- [ ] Call services in sequence
+- [ ] Call services in parallel
+- [ ] Replace default router with chi
+
 ### MVP
 
 - [ ] Configurable accuracy of overhead via ENV Variable
-  - [ ] via query param
-- [ ] function composition of handlers
+  - [ ] via (optional) query param
+- [x] function composition of handlers
 - [ ] allow setting accuracy from ENV variable
 - [ ] Handle non-200 responses from external rest apis
 - [ ] gzip compress response
 - [ ] generate swagger docs
 - [ ] structured logging
-  - [ ] set log level ENV Variable
+  - [ ] set log level via ENV Variable
 
 ### Additional
 
 - [ ] serve over https
-- [ ] dev `Dockerfile`
-- [ ] Add `Dockerfile`
+- [ ] Add dev `Dockerfile`
+- [ ] Add build `Dockerfile`
 - [ ] static code analysis (`go vet`/`staticcheck`)
 - [ ] serve swagger-ui
 - [ ] Circle-ci build
