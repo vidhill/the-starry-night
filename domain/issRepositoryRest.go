@@ -11,6 +11,7 @@ import (
 
 type ISSRepositoryRest struct {
 	config      ConfigRepository
+	http        HttpRepository
 	localConfig LocalConfig
 	logger      LoggerRepository
 }
@@ -31,7 +32,7 @@ func (s ISSRepositoryRest) GetCurrentLocation() (model.Coordinates, error) {
 	logger := s.logger
 	emptyResult := model.Coordinates{}
 
-	response, err := http.Get(s.localConfig.url)
+	response, err := s.http.Get(s.localConfig.url)
 
 	if err != nil {
 		logger.Error("Error fetching", err.Error())
@@ -59,12 +60,13 @@ func (s ISSRepositoryRest) GetCurrentLocation() (model.Coordinates, error) {
 	return s.SummarizeResponse(result)
 }
 
-func NewISSRepositoryRest(config ConfigRepository, logger LoggerRepository) ISSRepositoryRest {
+func NewISSRepositoryRest(config ConfigRepository, http HttpRepository, logger LoggerRepository) ISSRepositoryRest {
 	localConfig := LocalConfig{
 		url: config.GetString("ISS_API_URL"),
 	}
 	return ISSRepositoryRest{
 		config:      config,
+		http:        http,
 		localConfig: localConfig,
 		logger:      logger,
 	}
