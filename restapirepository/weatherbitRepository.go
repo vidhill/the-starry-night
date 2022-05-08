@@ -1,4 +1,4 @@
-package domain
+package restapirepository
 
 import (
 	"encoding/json"
@@ -10,13 +10,14 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/vidhill/the-starry-night/domain"
 	"github.com/vidhill/the-starry-night/model"
 )
 
 type WeatherbitRepository struct {
-	config      ConfigRepository
-	logger      LoggerRepository
-	http        HttpRepository
+	config      domain.ConfigRepository
+	logger      domain.LoggerRepository
+	http        domain.HttpRepository
 	localConfig LocalConfig1
 }
 
@@ -43,12 +44,12 @@ type InterestedData struct {
 	ObTime  string `json:"ob_time"`
 }
 
-func (s WeatherbitRepository) GetCurrent(location model.Coordinates) (WeatherResult, error) {
+func (s WeatherbitRepository) GetCurrent(location model.Coordinates) (domain.WeatherResult, error) {
 
 	localConfig := s.localConfig
 	logger := s.logger
 
-	emptyResult := WeatherResult{}
+	emptyResult := domain.WeatherResult{}
 
 	url := localConfig.currentWeatherUrl + getQueryParams(location, localConfig.apiKey)
 
@@ -84,7 +85,7 @@ func (s WeatherbitRepository) GetCurrent(location model.Coordinates) (WeatherRes
 
 }
 
-func NewWeatherbitRepository(config ConfigRepository, http HttpRepository, logger LoggerRepository) WeatherbitRepository {
+func NewWeatherbitRepository(config domain.ConfigRepository, http domain.HttpRepository, logger domain.LoggerRepository) WeatherbitRepository {
 
 	apiKey := config.GetString("WEATHER_BIT_API_KEY")
 	baseurl := config.GetString("WEATHER_BIT_API_BASE_URL")
@@ -107,8 +108,8 @@ func NewWeatherbitRepository(config ConfigRepository, http HttpRepository, logge
 	}
 }
 
-func (s WeatherbitRepository) SummarizeResponse(res CurrentWeatherResponse) (WeatherResult, error) {
-	emptyResult := WeatherResult{}
+func (s WeatherbitRepository) SummarizeResponse(res CurrentWeatherResponse) (domain.WeatherResult, error) {
+	emptyResult := domain.WeatherResult{}
 	if len(res.Data) != 1 {
 		return emptyResult, errors.New("expected only one response")
 	}
@@ -122,7 +123,7 @@ func (s WeatherbitRepository) SummarizeResponse(res CurrentWeatherResponse) (Wea
 		return emptyResult, err
 	}
 
-	result := WeatherResult{
+	result := domain.WeatherResult{
 		CloudCover:        data.Clouds,
 		ObserverationTime: observerationTime,
 		Sunrise:           sunriseTime,
