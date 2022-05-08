@@ -1,11 +1,16 @@
 package handlers
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+
+	"github.com/vidhill/the-starry-night/service"
+)
 
 var okMessage = []byte("ok")
 
 type Handlers struct {
-	// service : FooService
+	ISSService service.ISSLocationService
 }
 
 type ErrorResponse struct {
@@ -17,16 +22,23 @@ func (s Handlers) Health(w http.ResponseWriter, req *http.Request) {
 	w.Write(okMessage)
 }
 
-func (s Handlers) GetFoo(w http.ResponseWriter, req *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("foo"))
-}
-
-func (h Handlers) Hello(w http.ResponseWriter, req *http.Request) {
+func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
+	location, _ := h.ISSService.GetCurrentLocation()
 	w.Header().Add("Content-Type", "application/json")
-	w.Write([]byte(`{ "World": true }`))
+
+	bs, err := json.Marshal(location)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(bs)
 }
 
-func NewHandlers() Handlers {
-	return Handlers{}
+func NewHandlers(issService service.ISSLocationService) Handlers {
+	return Handlers{
+		ISSService: issService,
+	}
 }

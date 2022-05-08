@@ -15,4 +15,5 @@
 # vendor/
 
 cmd/webapp/tmp
+tmp/
 main

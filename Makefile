@@ -12,5 +12,11 @@ start:
 dev:
 	air
 
+test:
+	go test ./...
+
+integration-test:
+	go test -tags="gpintegration" cmd/integration/*.go
+
 setup-git-hooks:
 	cp git-hooks/pre-push.sh .git/hooks/pre-push
