@@ -24,7 +24,7 @@
 - [x] Add Weather service
 - [ ] Call services in sequence
 - [ ] Call services in parallel
-- [ ] Replace default router with chi
+- [x] Replace default router with chi
 
 ### MVP
 
