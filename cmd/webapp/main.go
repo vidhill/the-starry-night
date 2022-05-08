@@ -30,7 +30,16 @@ func main() {
 	//
 	// route handlers
 	//
+	//
+
+	// swagger:route GET /health api
+	//
 	// health endpoint for kubernetes liveness probe
+	//
+	// Produces:
+	// - text/plain
+	// Responses:
+	// 				200:
 	mux.Get("/health", dh.Health)
 
 	// swagger:route GET /iss-position api ISSRequest
