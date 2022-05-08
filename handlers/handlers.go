@@ -11,11 +11,7 @@ var okMessage = []byte("ok")
 
 type Handlers struct {
 	ISSService service.ISSLocationService
-}
-
-type ErrorResponse struct {
-	Message   string `json:"message"`
-	ErrorCode int    `json:"error_code"`
+	Logger     service.LoggerService
 }
 
 func (s Handlers) Health(w http.ResponseWriter, req *http.Request) {
@@ -23,13 +19,29 @@ func (s Handlers) Health(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
-	location, _ := h.ISSService.GetCurrentLocation()
-	w.Header().Add("Content-Type", "application/json")
+	lat, long := getLatLongQueryParams(req)
+
+	if lat == "" {
+		handleInvalidMissingQueryParm(w, req, "lat")
+		return
+	}
+
+	if long == "" {
+		handleInvalidMissingQueryParm(w, req, "long")
+		return
+	}
+
+	location, err := h.ISSService.GetCurrentLocation()
+
+	if err != nil {
+		handleInternalServerError(w, req, "Error calling ISS API")
+		return
+	}
 
 	bs, err := json.Marshal(location)
 
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		handleInternalServerError(w, req, "Internal server error")
 		return
 	}
 
@@ -37,8 +49,16 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 	w.Write(bs)
 }
 
-func NewHandlers(issService service.ISSLocationService) Handlers {
+func NewHandlers(logger service.LoggerService, issService service.ISSLocationService) Handlers {
 	return Handlers{
+		Logger:     logger,
 		ISSService: issService,
 	}
+}
+
+func getLatLongQueryParams(req *http.Request) (string, string) {
+	lat := getQueryParam(req, "lat")
+	long := getQueryParam(req, "long")
+
+	return lat, long
 }
