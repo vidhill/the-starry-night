@@ -33,6 +33,12 @@ func main() {
 	// health endpoint for kubernetes liveness probe
 	mux.Get("/health", dh.Health)
 
+	// swagger:route GET /iss-position api ISSRequest
+	//
+	// Determines if ISS is overhead.
+	//
+	// Responses:
+	// 		    200: ISSResult
 	mux.Get("/iss-position", composeHandler(addJsonHeader)(dh.ISSPosition))
 
 	// start server
