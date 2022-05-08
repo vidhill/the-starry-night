@@ -12,6 +12,7 @@ var (
 	handleInvalidRequest      = makeErrorHandlerFunc(http.StatusBadRequest)
 )
 
+// swagger:model ErrorResponse
 type ErrorResponse struct {
 	Message   string `json:"message"`
 	ErrorCode int    `json:"error_code"`
