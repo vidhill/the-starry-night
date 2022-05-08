@@ -19,6 +19,19 @@ type Handlers struct {
 	WeatherService service.WeatherService
 }
 
+// swagger:parameters ISSRequest
+type ISSRequest struct {
+	// required: true
+	// example: 51.89764968941597
+	// In: query
+	Latitude float64 `json:"lat"`
+	// required: true
+	// example: -8.46828736406348
+	// In: query
+	Longitude float64 `json:"long"`
+}
+
+// swagger:model ISSResult
 type Result struct {
 	ISSOverhead bool `json:"iss_overhead"`
 }
