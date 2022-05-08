@@ -1,13 +1,13 @@
-PATH=cmd/webapp/main.go
+ROOT_PATH=cmd/webapp/main.go
 
 default: pre-build
-	go build $(PATH)
+	go build $(ROOT_PATH)
 
 pre-build:
 	rm -rf main
 
 start:
-	go run $(PATH)
+	go run $(ROOT_PATH)
 
 dev:
 	air
