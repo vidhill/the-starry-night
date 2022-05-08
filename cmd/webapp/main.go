@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/vidhill/the-starry-night/domain"
 	"github.com/vidhill/the-starry-night/handlers"
 	rest_api_repository "github.com/vidhill/the-starry-night/restapirepository"
