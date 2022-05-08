@@ -1,4 +1,4 @@
-package domain
+package restapirepository
 
 import (
 	"encoding/json"
@@ -6,14 +6,15 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/vidhill/the-starry-night/domain"
 	"github.com/vidhill/the-starry-night/model"
 )
 
 type ISSLocationRepositoryRest struct {
-	config      ConfigRepository
-	http        HttpRepository
+	config      domain.ConfigRepository
+	http        domain.HttpRepository
 	localConfig LocalConfig
-	logger      LoggerRepository
+	logger      domain.LoggerRepository
 }
 
 type LocalConfig struct {
@@ -60,7 +61,10 @@ func (s ISSLocationRepositoryRest) GetCurrentLocation() (model.Coordinates, erro
 	return s.SummarizeResponse(result)
 }
 
-func NewISSRepositoryRest(config ConfigRepository, http HttpRepository, logger LoggerRepository) ISSLocationRepositoryRest {
+//
+// Repository 'Constructor' function
+//
+func NewISSRepositoryRest(config domain.ConfigRepository, http domain.HttpRepository, logger domain.LoggerRepository) ISSLocationRepositoryRest {
 	localConfig := LocalConfig{
 		url: config.GetString("ISS_API_URL"),
 	}
