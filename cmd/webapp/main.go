@@ -22,15 +22,15 @@ func main() {
 
 	dh := handlers.NewHandlers(loggerService, ISSService)
 
-	mux := http.NewServeMux()
+	mux := chi.NewRouter()
 
 	//
 	// route handlers
 	//
 	// health endpoint for kubernetes liveness probe
-	mux.HandleFunc("/health", dh.Health)
+	mux.Get("/health", dh.Health)
 
-	mux.HandleFunc("/iss-position", dh.ISSPosition)
+	mux.Get("/iss-position", dh.ISSPosition)
 
 	// start server
 	port := configService.GetString("SERVER_PORT")
