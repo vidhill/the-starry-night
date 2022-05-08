@@ -37,3 +37,7 @@ func makeErrorHandlerFunc(statusCode int) func(w http.ResponseWriter, r *http.Re
 func handleInvalidMissingQueryParm(w http.ResponseWriter, r *http.Request, missing string) {
 	handleInvalidRequest(w, r, fmt.Sprintf(`Invalid request, query param "%s" is required`, missing))
 }
+
+func getQueryParam(req *http.Request, id string) string {
+	return req.URL.Query().Get("long")
+}
