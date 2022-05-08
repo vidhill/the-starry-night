@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/vidhill/the-starry-night/domain"
 	"github.com/vidhill/the-starry-night/model"
+	"github.com/vidhill/the-starry-night/utils"
 )
 
 type ISSLocationRepositoryRest struct {
@@ -80,30 +80,12 @@ func (s ISSLocationRepositoryRest) SummarizeResponse(a ApiResponse) (model.Coord
 	logger := s.logger
 	position := a.IssPosition
 
-	latitude, err := parseFloat(position.Latitude)
+	coordinates, err := utils.MakeCoordinatesFromString(position.Latitude, position.Longitude)
+
 	if err != nil {
 		logger.Error("Error parsing float string", err.Error())
 		return model.Coordinates{}, err
 	}
 
-	longitude, err := parseFloat(position.Longitude)
-	if err != nil {
-		logger.Error("Error parsing float string", err.Error())
-		return model.Coordinates{}, err
-	}
-
-	result := model.Coordinates{
-		Latitude:  latitude,
-		Longitude: longitude,
-	}
-
-	return result, nil
-}
-
-func parseFloat(s string) (float32, error) {
-	f, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		return 0, err
-	}
-	return float32(f), nil
+	return coordinates, nil
 }
