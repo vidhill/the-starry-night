@@ -10,7 +10,7 @@ import (
 var okMessage = []byte("ok")
 
 type Handlers struct {
-	ISSService service.ISSService
+	ISSService service.ISSLocationService
 }
 
 type ErrorResponse struct {
@@ -37,7 +37,7 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 	w.Write(bs)
 }
 
-func NewHandlers(issService service.ISSService) Handlers {
+func NewHandlers(issService service.ISSLocationService) Handlers {
 	return Handlers{
 		ISSService: issService,
 	}

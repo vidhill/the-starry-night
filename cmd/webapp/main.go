@@ -17,7 +17,7 @@ func main() {
 
 	ISSRepository := domain.NewISSRepositoryRest(configService, httpService, loggerService)
 
-	ISSService := service.NewISSService(ISSRepository)
+	ISSService := service.NewISSLocationService(ISSRepository)
 
 	dh := handlers.NewHandlers(ISSService)
 

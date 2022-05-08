@@ -12,7 +12,7 @@ func main() {
 
 	ISSRepository := domain.NewISSRepositoryRest(configService, httpService, loggerService)
 
-	issService := service.NewISSService(ISSRepository)
+	issService := service.NewISSLocationService(ISSRepository)
 
 	res, err := issService.GetCurrentLocation()
 	if err != nil {
