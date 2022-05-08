@@ -20,7 +20,7 @@ func main() {
 
 	ISSService := service.NewISSLocationService(ISSRepository)
 
-	dh := handlers.NewHandlers(ISSService)
+	dh := handlers.NewHandlers(loggerService, ISSService)
 
 	mux := http.NewServeMux()
 
