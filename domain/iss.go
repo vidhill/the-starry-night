@@ -2,6 +2,6 @@ package domain
 
 import "github.com/vidhill/the-starry-night/model"
 
-type ISSRepository interface {
+type ISSLocationRepository interface {
 	GetCurrentLocation() (model.Coordinates, error)
 }

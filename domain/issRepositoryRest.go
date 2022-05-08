@@ -9,7 +9,7 @@ import (
 	"github.com/vidhill/the-starry-night/model"
 )
 
-type ISSRepositoryRest struct {
+type ISSLocationRepositoryRest struct {
 	config      ConfigRepository
 	http        HttpRepository
 	localConfig LocalConfig
@@ -28,7 +28,7 @@ type ApiResponse struct {
 	Message string `json:"message"`
 }
 
-func (s ISSRepositoryRest) GetCurrentLocation() (model.Coordinates, error) {
+func (s ISSLocationRepositoryRest) GetCurrentLocation() (model.Coordinates, error) {
 	logger := s.logger
 	emptyResult := model.Coordinates{}
 
@@ -60,11 +60,11 @@ func (s ISSRepositoryRest) GetCurrentLocation() (model.Coordinates, error) {
 	return s.SummarizeResponse(result)
 }
 
-func NewISSRepositoryRest(config ConfigRepository, http HttpRepository, logger LoggerRepository) ISSRepositoryRest {
+func NewISSRepositoryRest(config ConfigRepository, http HttpRepository, logger LoggerRepository) ISSLocationRepositoryRest {
 	localConfig := LocalConfig{
 		url: config.GetString("ISS_API_URL"),
 	}
-	return ISSRepositoryRest{
+	return ISSLocationRepositoryRest{
 		config:      config,
 		http:        http,
 		localConfig: localConfig,
@@ -72,7 +72,7 @@ func NewISSRepositoryRest(config ConfigRepository, http HttpRepository, logger L
 	}
 }
 
-func (s ISSRepositoryRest) SummarizeResponse(a ApiResponse) (model.Coordinates, error) {
+func (s ISSLocationRepositoryRest) SummarizeResponse(a ApiResponse) (model.Coordinates, error) {
 	logger := s.logger
 	position := a.IssPosition
 

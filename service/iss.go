@@ -5,19 +5,19 @@ import (
 	"github.com/vidhill/the-starry-night/model"
 )
 
-type ISSService interface {
+type ISSLocationService interface {
 	GetCurrentLocation() (model.Coordinates, error)
 }
 
 type DefaultISSService struct {
-	repo domain.ISSRepository
+	repo domain.ISSLocationRepository
 }
 
 func (s DefaultISSService) GetCurrentLocation() (model.Coordinates, error) {
 	return s.repo.GetCurrentLocation()
 }
 
-func NewISSService(repository domain.ISSRepository) ISSService {
+func NewISSLocationService(repository domain.ISSLocationRepository) ISSLocationService {
 	return DefaultISSService{
 		repo: repository,
 	}
