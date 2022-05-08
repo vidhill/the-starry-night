@@ -18,10 +18,12 @@ func main() {
 	httpService := service.NewHttpService(domain.NewDefaultHttpClient(loggerService))
 
 	ISSRepository := rest_api_repository.NewISSRepositoryRest(configService, httpService, loggerService)
+	weatherRepository := rest_api_repository.NewWeatherbitRepository(configService, httpService, loggerService)
 
 	ISSService := service.NewISSLocationService(ISSRepository)
+	weatherService := service.NewWeatherService(weatherRepository)
 
-	dh := handlers.NewHandlers(loggerService, ISSService)
+	dh := handlers.NewHandlers(loggerService, ISSService, weatherService)
 
 	mux := chi.NewRouter()
 
