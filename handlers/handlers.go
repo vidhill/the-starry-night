@@ -13,11 +13,6 @@ type Handlers struct {
 	ISSService service.ISSLocationService
 }
 
-type ErrorResponse struct {
-	Message   string `json:"message"`
-	ErrorCode int    `json:"error_code"`
-}
-
 func (s Handlers) Health(w http.ResponseWriter, req *http.Request) {
 	w.Write(okMessage)
 }

@@ -12,6 +12,11 @@ var (
 	handleInvalidRequest      = makeErrorHandlerFunc(http.StatusBadRequest)
 )
 
+type ErrorResponse struct {
+	Message   string `json:"message"`
+	ErrorCode int    `json:"error_code"`
+}
+
 func makeErrorResponse(code int, message string) []byte {
 	e := ErrorResponse{
 		Message:   message,
