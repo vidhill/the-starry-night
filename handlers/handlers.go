@@ -19,8 +19,6 @@ func (s Handlers) Health(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
-	w.Header().Add("Content-Type", "application/json")
-
 	lat := req.URL.Query().Get("lat")
 	long := req.URL.Query().Get("long")
 
