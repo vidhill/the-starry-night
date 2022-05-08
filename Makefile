@@ -20,3 +20,14 @@ integration-test:
 
 setup-git-hooks:
 	cp git-hooks/pre-push.sh .git/hooks/pre-push
+
+check-swagger:
+	which swagger || echo "Please install go swagger"
+
+scan-swagger:
+	swagger generate spec -o swagger.yaml --scan-models
+
+serve-swagger:
+	swagger serve -F=swagger swagger.yaml
+
+scan-serve-swagger: check-swagger scan-swagger serve-swagger
