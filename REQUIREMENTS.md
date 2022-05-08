@@ -21,7 +21,7 @@
 ### TODO
 
 - [x] Add ISS location service
-- [ ] Add Weather service
+- [x] Add Weather service
 - [ ] Call services in sequence
 - [ ] Call services in parallel
 - [ ] Replace default router with chi
