@@ -18,6 +18,12 @@
 >
 > Please write the service as you would your production-quality code, including documentation, unit tests, and other measures you would take to ensure the correctness of the code. Also have a think about what V2 of the application might look like.
 
+### TODO
+
+- [x] Add ISS location service
+- [ ] Add Weather service
+- [ ] Replace default router with chi
+
 ### MVP
 
 - [ ] Configurable accuracy of overhead via ENV Variable
