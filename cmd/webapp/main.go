@@ -38,7 +38,9 @@ func main() {
 	// Determines if ISS is overhead.
 	//
 	// Responses:
-	// 		    200: ISSResult
+	// 				200: ISSResult
+	// 				400: ErrorResponse
+	// 				500: ErrorResponse
 	mux.Get("/iss-position", composeHandler(addJsonHeader)(dh.ISSPosition))
 
 	// start server
