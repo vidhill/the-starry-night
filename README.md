@@ -14,9 +14,10 @@
 
 The default values are loaded from `settings.yaml` and can be overridden by environment variables
 
-| Description                     | ENV VARIABLE  | DEFAULT VALUE |
-| ------------------------------- | ------------- | ------------- |
-| Port that application listen on | `SERVER_PORT` | `8080`        |
+| Description                     | ENV VARIABLE  | DEFAULT VALUE                             |
+| ------------------------------- | ------------- | ----------------------------------------- |
+| Port that application listen on | `SERVER_PORT` | `8080`                                    |
+| ISS Rest API URL                | `ISS_API_URL` | `http://api.open-notify.org/iss-now.json` |
 
 # Prerequisites
 
