@@ -13,9 +13,13 @@ func main() {
 	// wiring
 	configService := service.NewConfigService(domain.NewViperConfig())
 	loggerService := service.NewLoggerService(domain.NewStandardLogger())
-	issService := service.NewISSService(domain.NewISSRepositoryRest(configService, loggerService))
+	httpService := service.NewHttpService(domain.NewDefaultHttpClient(loggerService))
 
-	dh := handlers.NewHandlers(issService)
+	ISSRepository := domain.NewISSRepositoryRest(configService, httpService, loggerService)
+
+	ISSService := service.NewISSService(ISSRepository)
+
+	dh := handlers.NewHandlers(ISSService)
 
 	mux := http.NewServeMux()
 
