@@ -1,10 +1,16 @@
 package domain
 
-import "github.com/vidhill/the-starry-night/model"
+import (
+	"time"
+
+	"github.com/vidhill/the-starry-night/model"
+)
 
 type WeatherResult struct {
-	AfterSunset bool
-	CloudCover  float32
+	CloudCover        int
+	Sunrise           time.Time
+	Sunset            time.Time
+	ObserverationTime time.Time
 }
 
 type WeatherRepository interface {
