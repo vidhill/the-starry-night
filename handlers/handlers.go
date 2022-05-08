@@ -19,8 +19,7 @@ func (s Handlers) Health(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
-	lat := req.URL.Query().Get("lat")
-	long := req.URL.Query().Get("long")
+	lat, long := getLatLongQueryParams(req)
 
 	if lat == "" {
 		handleInvalidMissingQueryParm(w, req, "lat")
@@ -55,4 +54,11 @@ func NewHandlers(logger service.LoggerService, issService service.ISSLocationSer
 		Logger:     logger,
 		ISSService: issService,
 	}
+}
+
+func getLatLongQueryParams(req *http.Request) (string, string) {
+	lat := getQueryParam(req, "lat")
+	long := getQueryParam(req, "long")
+
+	return lat, long
 }
