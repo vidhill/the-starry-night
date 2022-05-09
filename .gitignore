@@ -19,3 +19,5 @@ settings_private.yaml
 cmd/webapp/tmp
 tmp/
 main
+
+swagger.yaml

@@ -22,9 +22,9 @@
 
 - [x] Add ISS location service
 - [x] Add Weather service
-- [ ] Call services in sequence
+- [x] Call services in sequence
 - [ ] Call services in parallel
-- [ ] Replace default router with chi
+- [x] Replace default router with chi
 
 ### MVP
 
@@ -34,7 +34,7 @@
 - [ ] allow setting accuracy from ENV variable
 - [ ] Handle non-200 responses from external rest apis
 - [ ] gzip compress response
-- [ ] generate swagger docs
+- [x] generate swagger docs
 - [ ] structured logging
   - [ ] set log level via ENV Variable
 
