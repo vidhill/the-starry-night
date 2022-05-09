@@ -16,7 +16,7 @@ test:
 	go test ./...
 
 integration-test:
-	go test -tags="gpintegration" cmd/integration/*.go
+	go test -tags="integration" cmd/integration/*.go
 
 setup-git-hooks:
 	cp git-hooks/pre-push.sh .git/hooks/pre-push
@@ -31,3 +31,10 @@ serve-swagger:
 	swagger serve -F=swagger swagger.yaml
 
 scan-serve-swagger: check-swagger scan-swagger serve-swagger
+
+create-stettings-private:
+  ifeq ($(wildcard $(SETTINGS_PRIVATE)),) # only create if does not exist
+		@touch $(SETTINGS_PRIVATE)
+		@echo "WEATHER_BIT_API_KEY:" > $(SETTINGS_PRIVATE)
+		$(info Created file: $(SETTINGS_PRIVATE))
+  endif
