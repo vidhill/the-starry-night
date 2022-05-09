@@ -52,8 +52,6 @@ func (s WeatherbitRepository) GetCurrent(location model.Coordinates) (domain.Wea
 
 	url := localConfig.currentWeatherUrl + getQueryParams(location, localConfig.apiKey)
 
-	logger.Info("url", url)
-
 	response, err := s.http.Get(url)
 
 	if err != nil {
