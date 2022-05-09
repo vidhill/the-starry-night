@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vidhill/the-starry-night/domain"
@@ -15,6 +17,13 @@ func main() {
 	// wiring
 	configService := service.NewConfigService(domain.NewViperConfig())
 	loggerService := service.NewLoggerService(domain.NewStandardLogger())
+
+	configErr := validateEnvVariables(configService)
+	if configErr != nil {
+		loggerService.Error(configErr.Error())
+		os.Exit(1)
+	}
+
 	httpService := service.NewHttpService(domain.NewDefaultHttpClient(loggerService))
 
 	ISSRepository := rest_api_repository.NewISSRepositoryRest(configService, httpService, loggerService)
@@ -23,7 +32,7 @@ func main() {
 	ISSService := service.NewISSLocationService(ISSRepository)
 	weatherService := service.NewWeatherService(weatherRepository)
 
-	dh := handlers.NewHandlers(loggerService, ISSService, weatherService)
+	dh := handlers.NewHandlers(configService, loggerService, ISSService, weatherService)
 
 	mux := chi.NewRouter()
 
@@ -80,4 +89,18 @@ func addJsonHeader(next http.HandlerFunc) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		next(w, r)
 	}
+}
+
+func validateEnvVariables(config service.ConfigService) error {
+	cloudCoverThreshold := config.GetInt("CLOUD_COVER_THRESHOLD")
+	apiKey := config.GetString("WEATHER_BIT_API_KEY")
+
+	if apiKey == "" {
+		return errors.New("required environment varible for WEATHER_BIT_API_KEY is not set")
+	}
+
+	if cloudCoverThreshold == 0 || cloudCoverThreshold < 0 {
+		return errors.New("CLOUD_COVER_THRESHOLD is not set, value should be a positive int")
+	}
+	return nil
 }

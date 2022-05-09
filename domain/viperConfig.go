@@ -18,6 +18,10 @@ func (c ConfigViperRepository) GetBool(s string) bool {
 	return c.Registry.GetBool(s)
 }
 
+func (c ConfigViperRepository) GetInt(s string) int {
+	return c.Registry.GetInt(s)
+}
+
 func NewViperConfig() ConfigViperRepository {
 
 	registry := viper.New()

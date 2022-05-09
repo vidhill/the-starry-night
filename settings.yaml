@@ -1,3 +1,5 @@
 SERVER_PORT: 8080
 ISS_API_URL: http://api.open-notify.org/iss-now.json
 WEATHER_BIT_API_BASE_URL: https://api.weatherbit.io/v2.0
+CLOUD_COVER_THRESHOLD: 30
+ACCURACY_NUM_DECIMAL_PLACES: 4

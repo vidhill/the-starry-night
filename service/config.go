@@ -5,6 +5,7 @@ import "github.com/vidhill/the-starry-night/domain"
 type ConfigService interface {
 	GetString(string) string
 	GetBool(string) bool
+	GetInt(string) int
 }
 
 type DefaultConfigService struct {
@@ -17,6 +18,10 @@ func (s DefaultConfigService) GetString(id string) string {
 
 func (s DefaultConfigService) GetBool(id string) bool {
 	return s.repo.GetBool(id)
+}
+
+func (s DefaultConfigService) GetInt(id string) int {
+	return s.repo.GetInt(id)
 }
 
 func NewConfigService(repository domain.ConfigRepository) ConfigService {

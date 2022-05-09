@@ -21,12 +21,14 @@ The default values are loaded from `settings.yaml` and can be overridden by envi
 For local development & convenience you can create a `settings_private.yaml` to store the api key,
 to create the file run `make create-settings-private`
 
-| Description                     | ENV VARIABLE                | DEFAULT VALUE                             | Required |
-| ------------------------------- | --------------------------- | ----------------------------------------- | -------- |
-| Port that application listen on | `SERVER_PORT`               | `8080`                                    |          |
-| ISS Rest API URL                | `ISS_API_URL`               | `http://api.open-notify.org/iss-now.json` |          |
-| Weatherbit Rest API key         | `WEATHER_BIT_API_KEY`:      | _none_                                    | yes      |
-| Weatherbit Rest API base URL    | `WEATHER_BIT_API_BASE_URL`: | `https://api.weatherbit.io/v2.0`          |          |
+| Description                                                         | ENV VARIABLE                  | DEFAULT VALUE                             | Required |
+| ------------------------------------------------------------------- | ----------------------------- | ----------------------------------------- | -------- |
+| Port that application listen on                                     | `SERVER_PORT`                 | `8080`                                    |          |
+| ISS Rest API URL                                                    | `ISS_API_URL`                 | `http://api.open-notify.org/iss-now.json` |          |
+| Weatherbit Rest API key                                             | `WEATHER_BIT_API_KEY`:        | _none_                                    | yes      |
+| Weatherbit Rest API base URL                                        | `WEATHER_BIT_API_BASE_URL`:   | `https://api.weatherbit.io/v2.0`          |          |
+| Threshold value over which visibility is considered possible        | `CLOUD_COVER_THRESHOLD`       | 30                                        |          |
+| How many decimal places of accuracy to use to consider ISS overhead | `ACCURACY_NUM_DECIMAL_PLACES` | 4                                         |          |
 
 # Prerequisites
 

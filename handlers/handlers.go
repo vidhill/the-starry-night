@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/vidhill/the-starry-night/domain"
+	"github.com/vidhill/the-starry-night/model"
 	"github.com/vidhill/the-starry-night/service"
 	"github.com/vidhill/the-starry-night/utils"
 )
@@ -11,6 +13,7 @@ import (
 var okMessage = []byte("ok")
 
 type Handlers struct {
+	Config         service.ConfigService
 	ISSService     service.ISSLocationService
 	Logger         service.LoggerService
 	WeatherService service.WeatherService
@@ -38,6 +41,9 @@ func (s Handlers) Health(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
+	cloudCoverThreshold := h.Config.GetInt("CLOUD_COVER_THRESHOLD")
+	accuracyNumDecimalPlaces := uint(h.Config.GetInt("ACCURACY_NUM_DECIMAL_PLACES"))
+
 	lat, long := getLatLongQueryParams(req)
 
 	if lat == "" {
@@ -57,22 +63,15 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ISSlocation, err := h.ISSService.GetCurrentLocation()
+	ISSlocation, weatherResult, err := h.CallAPIsParallel(coordinates)
 
 	if err != nil {
-		handleInternalServerError(w, req, "Error calling ISS API")
-		return
-	}
-
-	weatherResult, err := h.WeatherService.GetCurrent(coordinates)
-
-	if err != nil {
-		handleInternalServerError(w, req, "Error calling weather API")
+		handleInternalServerError(w, req, "failed")
 		return
 	}
 
 	res := Result{
-		ISSOverhead: CheckISSVisible(coordinates, ISSlocation, weatherResult, 30, 4),
+		ISSOverhead: CheckISSVisible(coordinates, ISSlocation, weatherResult, cloudCoverThreshold, accuracyNumDecimalPlaces),
 	}
 
 	bs, err := json.Marshal(res)
@@ -86,9 +85,63 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 	w.Write(bs)
 }
 
-func NewHandlers(logger service.LoggerService, issService service.ISSLocationService, weatherService service.WeatherService) Handlers {
+func (h Handlers) CallAPIsParallel(coordinates model.Coordinates) (model.Coordinates, domain.WeatherResult, error) {
+	logger := h.Logger
+
+	coordinatesChan := make(chan model.Coordinates, 1)
+	weatherChan := make(chan domain.WeatherResult, 1)
+	errorsChan := make(chan error, 1)
+	errorsChan1 := make(chan error, 1)
+
+	go func() {
+		logger.Info("requesting from ISS endpoint")
+		ISSlocation, err := h.ISSService.GetCurrentLocation()
+		coordinatesChan <- ISSlocation
+		errorsChan <- err
+		logger.Info("response from ISS endpoint")
+	}()
+
+	go func() {
+		logger.Info("requesting from weather endpoint")
+		weatherResult, err := h.WeatherService.GetCurrent(coordinates)
+		weatherChan <- weatherResult
+		errorsChan1 <- err
+		logger.Info("response from weather endpoint")
+	}()
+
+	ISSlocation := <-coordinatesChan
+	issErr := <-errorsChan
+
+	weatherResult := <-weatherChan
+	weatherErr := <-errorsChan1
+
+	close(coordinatesChan)
+	close(weatherChan)
+	close(errorsChan)
+	close(errorsChan1)
+
+	if issErr != nil {
+		logger.Error(issErr)
+		return ISSlocation, weatherResult, issErr
+	}
+
+	if weatherErr != nil {
+		logger.Error(weatherErr)
+		return ISSlocation, weatherResult, weatherErr
+	}
+
+	return ISSlocation, weatherResult, nil
+}
+
+func NewHandlers(
+	config service.ConfigService,
+	logger service.LoggerService,
+	issService service.ISSLocationService,
+	weatherService service.WeatherService,
+) Handlers {
 
 	return Handlers{
+		Config:         config,
 		Logger:         logger,
 		ISSService:     issService,
 		WeatherService: weatherService,
