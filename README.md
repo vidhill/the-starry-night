@@ -18,6 +18,9 @@ This API key should **must** be configured using an environment variable `WEATHE
 
 The default values are loaded from `settings.yaml` and can be overridden by environment variables
 
+For local development & convenience you can create a `settings_private.yaml` to store the api key,
+to create the file run `make create-settings-private`
+
 | Description                     | ENV VARIABLE                | DEFAULT VALUE                             | Required |
 | ------------------------------- | --------------------------- | ----------------------------------------- | -------- |
 | Port that application listen on | `SERVER_PORT`               | `8080`                                    |          |
