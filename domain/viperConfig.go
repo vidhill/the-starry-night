@@ -22,11 +22,16 @@ func NewViperConfig() ConfigViperRepository {
 
 	registry := viper.New()
 
-	registry.SetConfigName("settings") // name of config file (without extension)
+	registry.SetConfigName("settings_private")
 	registry.AddConfigPath("./")
 
-	err := registry.ReadInConfig() // Find and read the config file
-	registry.AutomaticEnv()        // override settings with env vars (if set)
+	registry.ReadInConfig() // Find and read the (private) config file
+
+	registry.SetConfigName("settings") // name of config file (without extension)
+
+	err := registry.MergeInConfig() // merge settings.yaml into settings_private.yaml
+
+	registry.AutomaticEnv() // override settings with env vars (if set)
 
 	if err != nil { // Handle errors reading the config file
 		panic(fmt.Errorf("fatal error config file: %w", err))
