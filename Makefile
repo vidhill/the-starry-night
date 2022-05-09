@@ -1,4 +1,5 @@
 ROOT_PATH=cmd/webapp/main.go
+SETTINGS_PRIVATE=settings_private.yaml
 
 default: pre-build
 	go build $(ROOT_PATH)
