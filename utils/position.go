@@ -7,14 +7,15 @@ import (
 )
 
 func MakeCoordinatesFromString(lat, long string) (model.Coordinates, error) {
+	emptyRes := model.Coordinates{}
 	latitude, err := parseFloat(lat)
 	if err != nil {
-		return model.Coordinates{}, err
+		return emptyRes, err
 	}
 
 	longitude, err := parseFloat(long)
 	if err != nil {
-		return model.Coordinates{}, err
+		return emptyRes, err
 	}
 
 	result := model.Coordinates{
