@@ -23,7 +23,7 @@ func main() {
 	ISSService := service.NewISSLocationService(ISSRepository)
 	weatherService := service.NewWeatherService(weatherRepository)
 
-	dh := handlers.NewHandlers(loggerService, ISSService, weatherService)
+	dh := handlers.NewHandlers(configService, loggerService, ISSService, weatherService)
 
 	mux := chi.NewRouter()
 

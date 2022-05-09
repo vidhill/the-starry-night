@@ -11,6 +11,7 @@ import (
 var okMessage = []byte("ok")
 
 type Handlers struct {
+	Config         service.ConfigService
 	ISSService     service.ISSLocationService
 	Logger         service.LoggerService
 	WeatherService service.WeatherService
@@ -86,9 +87,15 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 	w.Write(bs)
 }
 
-func NewHandlers(logger service.LoggerService, issService service.ISSLocationService, weatherService service.WeatherService) Handlers {
+func NewHandlers(
+	config service.ConfigService,
+	logger service.LoggerService,
+	issService service.ISSLocationService,
+	weatherService service.WeatherService,
+) Handlers {
 
 	return Handlers{
+		Config:         config,
 		Logger:         logger,
 		ISSService:     issService,
 		WeatherService: weatherService,
