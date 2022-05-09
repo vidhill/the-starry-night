@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"os"
 	"regexp"
 	"time"
 
@@ -89,11 +88,6 @@ func NewWeatherbitRepository(config domain.ConfigRepository, http domain.HttpRep
 
 	apiKey := config.GetString("WEATHER_BIT_API_KEY")
 	baseurl := config.GetString("WEATHER_BIT_API_BASE_URL")
-
-	if apiKey == "" {
-		logger.Error("Required environment varible for WEATHER_BIT_API_KEY is not set")
-		os.Exit(1)
-	}
 
 	localConfig := LocalConfig1{
 		currentWeatherUrl: baseurl + "/current?",
