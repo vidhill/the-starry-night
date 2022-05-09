@@ -5,6 +5,7 @@ import "github.com/vidhill/the-starry-night/domain"
 type ConfigService interface {
 	GetString(string) string
 	GetBool(string) bool
+	GetInt(string) int
 }
 
 type DefaultConfigService struct {
