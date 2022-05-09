@@ -17,3 +17,5 @@
 cmd/webapp/tmp
 tmp/
 main
+
+swagger.yaml
