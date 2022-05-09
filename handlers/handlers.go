@@ -40,6 +40,7 @@ func (s Handlers) Health(w http.ResponseWriter, req *http.Request) {
 
 func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 	cloudCoverThreshold := h.Config.GetInt("CLOUD_COVER_THRESHOLD")
+	accuracyNumDecimalPlaces := uint(h.Config.GetInt("ACCURACY_NUM_DECIMAL_PLACES"))
 
 	lat, long := getLatLongQueryParams(req)
 
@@ -75,7 +76,7 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 	}
 
 	res := Result{
-		ISSOverhead: CheckISSVisible(coordinates, ISSlocation, weatherResult, cloudCoverThreshold, 4),
+		ISSOverhead: CheckISSVisible(coordinates, ISSlocation, weatherResult, cloudCoverThreshold, accuracyNumDecimalPlaces),
 	}
 
 	bs, err := json.Marshal(res)
