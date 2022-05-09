@@ -2,11 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
-	"math"
 	"net/http"
 
-	"github.com/vidhill/the-starry-night/domain"
-	"github.com/vidhill/the-starry-night/model"
 	"github.com/vidhill/the-starry-night/service"
 	"github.com/vidhill/the-starry-night/utils"
 )
