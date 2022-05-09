@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/vidhill/the-starry-night/domain"
+	"github.com/vidhill/the-starry-night/model"
 	"github.com/vidhill/the-starry-night/service"
 	"github.com/vidhill/the-starry-night/utils"
 )
@@ -61,17 +63,10 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ISSlocation, err := h.ISSService.GetCurrentLocation()
+	ISSlocation, weatherResult, err := h.CallAPIsParallel(coordinates)
 
 	if err != nil {
-		handleInternalServerError(w, req, "Error calling ISS API")
-		return
-	}
-
-	weatherResult, err := h.WeatherService.GetCurrent(coordinates)
-
-	if err != nil {
-		handleInternalServerError(w, req, "Error calling weather API")
+		handleInternalServerError(w, req, "failed")
 		return
 	}
 
@@ -88,6 +83,54 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(bs)
+}
+
+func (h Handlers) CallAPIsParallel(coordinates model.Coordinates) (model.Coordinates, domain.WeatherResult, error) {
+	logger := h.Logger
+
+	coordinatesChan := make(chan model.Coordinates, 1)
+	weatherChan := make(chan domain.WeatherResult, 1)
+	errorsChan := make(chan error, 1)
+	errorsChan1 := make(chan error, 1)
+
+	go func() {
+		logger.Info("requesting from ISS endpoint")
+		ISSlocation, err := h.ISSService.GetCurrentLocation()
+		coordinatesChan <- ISSlocation
+		errorsChan <- err
+		logger.Info("response from ISS endpoint")
+	}()
+
+	go func() {
+		logger.Info("requesting from weather endpoint")
+		weatherResult, err := h.WeatherService.GetCurrent(coordinates)
+		weatherChan <- weatherResult
+		errorsChan1 <- err
+		logger.Info("response from weather endpoint")
+	}()
+
+	ISSlocation := <-coordinatesChan
+	issErr := <-errorsChan
+
+	weatherResult := <-weatherChan
+	weatherErr := <-errorsChan1
+
+	close(coordinatesChan)
+	close(weatherChan)
+	close(errorsChan)
+	close(errorsChan1)
+
+	if issErr != nil {
+		logger.Error(issErr)
+		return ISSlocation, weatherResult, issErr
+	}
+
+	if weatherErr != nil {
+		logger.Error(weatherErr)
+		return ISSlocation, weatherResult, weatherErr
+	}
+
+	return ISSlocation, weatherResult, nil
 }
 
 func NewHandlers(
