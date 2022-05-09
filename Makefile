@@ -32,7 +32,7 @@ serve-swagger:
 
 scan-serve-swagger: check-swagger scan-swagger serve-swagger
 
-create-stettings-private:
+create-settings-private:
   ifeq ($(wildcard $(SETTINGS_PRIVATE)),) # only create if does not exist
 		@touch $(SETTINGS_PRIVATE)
 		@echo "WEATHER_BIT_API_KEY:" > $(SETTINGS_PRIVATE)
