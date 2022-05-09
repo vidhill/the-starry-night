@@ -20,6 +20,10 @@ func (s DefaultConfigService) GetBool(id string) bool {
 	return s.repo.GetBool(id)
 }
 
+func (s DefaultConfigService) GetInt(id string) int {
+	return s.repo.GetInt(id)
+}
+
 func NewConfigService(repository domain.ConfigRepository) ConfigService {
 	return DefaultConfigService{
 		repo: repository,
