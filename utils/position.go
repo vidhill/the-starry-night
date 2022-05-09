@@ -26,10 +26,6 @@ func MakeCoordinatesFromString(lat, long string) (model.Coordinates, error) {
 	return result, nil
 }
 
-func parseFloat(s string) (float32, error) {
-	f, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		return 0, err
-	}
-	return float32(f), nil
+func parseFloat(s string) (float64, error) {
+	return strconv.ParseFloat(s, 64)
 }
