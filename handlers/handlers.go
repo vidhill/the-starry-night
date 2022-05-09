@@ -75,7 +75,7 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 	}
 
 	res := Result{
-		ISSOverhead: CheckISSVisible(coordinates, ISSlocation, weatherResult, 30, 100),
+		ISSOverhead: CheckISSVisible(coordinates, ISSlocation, weatherResult, 30, 4),
 	}
 
 	bs, err := json.Marshal(res)
@@ -95,45 +95,5 @@ func NewHandlers(logger service.LoggerService, issService service.ISSLocationSer
 		Logger:         logger,
 		ISSService:     issService,
 		WeatherService: weatherService,
-	}
-}
-
-func getLatLongQueryParams(req *http.Request) (string, string) {
-	lat := getQueryParam(req, "lat")
-	long := getQueryParam(req, "long")
-
-	return lat, long
-}
-
-func CheckISSVisible(position, ISSPosition model.Coordinates, weatherResult domain.WeatherResult, cloudCoverThreshold, precision int) bool {
-	if weatherResult.CloudCover <= cloudCoverThreshold {
-		return false
-	}
-
-	positionsMatch := MakePositionsMatch(precision)
-
-	return positionsMatch(position, ISSPosition)
-}
-
-// todo perhaps should replace with more precise floating point implementation
-func MakeRoundToNPlaces(precision int) func(f float32) float32 {
-	precisionF := float64(precision)
-	return func(f float32) float32 {
-		fl := float64(f)
-		res := math.Round(fl+precisionF) / precisionF
-		return float32(res)
-	}
-}
-
-func MakePositionsMatch(precision int) func(model.Coordinates, model.Coordinates) bool {
-	roundToPrecision := MakeRoundToNPlaces(precision)
-	return func(a, b model.Coordinates) bool {
-
-		latsMatch := roundToPrecision(a.Latitude) == roundToPrecision(b.Latitude)
-		if !latsMatch {
-			return false
-		}
-		longsMatch := roundToPrecision(a.Longitude) == roundToPrecision(b.Longitude)
-		return longsMatch
 	}
 }
