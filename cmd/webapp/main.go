@@ -99,8 +99,8 @@ func validateEnvVariables(config service.ConfigService) error {
 		return errors.New("required environment varible for WEATHER_BIT_API_KEY is not set")
 	}
 
-	if cloudCoverThreshold == 0 {
-		return errors.New("CLOUD_COVER_THRESHOLD is not set")
+	if cloudCoverThreshold == 0 || cloudCoverThreshold < 0 {
+		return errors.New("CLOUD_COVER_THRESHOLD is not set, value should be a positive int")
 	}
 	return nil
 }
