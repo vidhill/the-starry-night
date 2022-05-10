@@ -59,3 +59,8 @@ create-settings-private:
 		@echo "WEATHER_BIT_API_KEY:" > $(SETTINGS_PRIVATE)
 		$(info Created file: $(SETTINGS_PRIVATE))
   endif
+
+lint:
+	./git-hooks/pre-push.sh 
+	forbidigo -set_exit_status ./...
+	staticcheck ./...
