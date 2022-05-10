@@ -36,7 +36,7 @@
 - [ ] gzip compress response
 - [x] generate swagger docs
 - [ ] structured logging
-  - [ ] set log level via ENV Variable
+  - [x] set log level via ENV Variable
 
 ### Additional
 
