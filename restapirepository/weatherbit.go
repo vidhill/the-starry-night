@@ -82,6 +82,9 @@ func (s WeatherbitRepository) GetCurrent(location model.Coordinates) (domain.Wea
 
 }
 
+//
+// Repository 'Constructor' function
+//
 func NewWeatherbitRepository(config domain.ConfigRepository, http domain.HttpRepository, logger domain.LoggerRepository) WeatherbitRepository {
 
 	apiKey := config.GetString("WEATHER_BIT_API_KEY")
@@ -99,6 +102,10 @@ func NewWeatherbitRepository(config domain.ConfigRepository, http domain.HttpRep
 		localConfig: localConfig,
 	}
 }
+
+//
+// Helpers
+//
 
 func (s WeatherbitRepository) SummarizeResponse(res CurrentWeatherResponse) (domain.WeatherResult, error) {
 	emptyResult := domain.WeatherResult{}
