@@ -19,15 +19,15 @@ var (
 )
 
 type WeatherbitRepository struct {
-	config      domain.ConfigRepository
-	logger      domain.LoggerRepository
-	http        domain.HttpRepository
-	localConfig LocalConfig1
+	Config      domain.ConfigRepository
+	Logger      domain.LoggerRepository
+	Http        domain.HttpRepository
+	LocalConfig LocalWeatherConfig
 }
 
-type LocalConfig1 struct {
-	currentWeatherUrl string
-	apiKey            string
+type LocalWeatherConfig struct {
+	CurrentWeatherUrl string
+	ApiKey            string
 }
 
 // API response JSON struct
@@ -45,14 +45,14 @@ type InterestedData struct {
 
 func (s WeatherbitRepository) GetCurrent(location model.Coordinates) (domain.WeatherResult, error) {
 
-	localConfig := s.localConfig
-	logger := s.logger
+	localConfig := s.LocalConfig
+	logger := s.Logger
 
 	emptyResult := domain.WeatherResult{}
 
-	url := localConfig.currentWeatherUrl + makeQueryParams(location, localConfig.apiKey)
+	url := localConfig.CurrentWeatherUrl + makeQueryParams(location, localConfig.ApiKey)
 
-	response, err := s.http.Get(url)
+	response, err := s.Http.Get(url)
 
 	if err != nil {
 		return emptyResult, err
@@ -90,16 +90,16 @@ func NewWeatherbitRepository(config domain.ConfigRepository, http domain.HttpRep
 	apiKey := config.GetString("WEATHER_BIT_API_KEY")
 	baseurl := config.GetString("WEATHER_BIT_API_BASE_URL")
 
-	localConfig := LocalConfig1{
-		currentWeatherUrl: baseurl + "/current?",
-		apiKey:            apiKey,
+	localConfig := LocalWeatherConfig{
+		CurrentWeatherUrl: baseurl + "/current?",
+		ApiKey:            apiKey,
 	}
 
 	return WeatherbitRepository{
-		config:      config,
-		logger:      logger,
-		http:        http,
-		localConfig: localConfig,
+		Config:      config,
+		Logger:      logger,
+		Http:        http,
+		LocalConfig: localConfig,
 	}
 }
 

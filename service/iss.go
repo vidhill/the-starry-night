@@ -10,15 +10,15 @@ type ISSLocationService interface {
 }
 
 type DefaultISSService struct {
-	repo domain.ISSLocationRepository
+	Repo domain.ISSLocationRepository
 }
 
 func (s DefaultISSService) GetCurrentLocation() (model.Coordinates, error) {
-	return s.repo.GetCurrentLocation()
+	return s.Repo.GetCurrentLocation()
 }
 
 func NewISSLocationService(repository domain.ISSLocationRepository) ISSLocationService {
 	return DefaultISSService{
-		repo: repository,
+		Repo: repository,
 	}
 }

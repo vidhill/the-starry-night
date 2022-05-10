@@ -10,10 +10,10 @@ import (
 )
 
 type DefaultISSVisible struct {
-	config  ConfigRepository
-	logger  LoggerRepository
-	iss     ISSLocationRepository
-	weather WeatherRepository
+	Config  ConfigRepository
+	Logger  LoggerRepository
+	ISS     ISSLocationRepository
+	Weather WeatherRepository
 }
 
 func (s DefaultISSVisible) GetISSVisible(now time.Time, coordinates model.Coordinates) (ISSVisibleResult, error) {
@@ -23,8 +23,8 @@ func (s DefaultISSVisible) GetISSVisible(now time.Time, coordinates model.Coordi
 		return ISSVisibleResult{}, err
 	}
 
-	cloudCoverThreshold := s.config.GetInt("CLOUD_COVER_THRESHOLD")
-	accuracyNumDecimalPlaces := uint(s.config.GetInt("ACCURACY_NUM_DECIMAL_PLACES"))
+	cloudCoverThreshold := s.Config.GetInt("CLOUD_COVER_THRESHOLD")
+	accuracyNumDecimalPlaces := uint(s.Config.GetInt("ACCURACY_NUM_DECIMAL_PLACES"))
 
 	res := ISSVisibleResult{
 		ISSOverhead: CheckISSVisible(
@@ -39,7 +39,7 @@ func (s DefaultISSVisible) GetISSVisible(now time.Time, coordinates model.Coordi
 }
 
 func (h DefaultISSVisible) CallAPIsParallel(coordinates model.Coordinates) (model.Coordinates, WeatherResult, error) {
-	logger := h.logger
+	logger := h.Logger
 
 	coordinatesChan := make(chan model.Coordinates, 1)
 	weatherChan := make(chan WeatherResult, 1)
@@ -48,7 +48,7 @@ func (h DefaultISSVisible) CallAPIsParallel(coordinates model.Coordinates) (mode
 
 	go func() {
 		logger.Info("requesting from ISS endpoint")
-		ISSlocation, err := h.iss.GetCurrentLocation()
+		ISSlocation, err := h.ISS.GetCurrentLocation()
 		coordinatesChan <- ISSlocation
 		errorsChan <- err
 		logger.Info("response from ISS endpoint")
@@ -56,7 +56,7 @@ func (h DefaultISSVisible) CallAPIsParallel(coordinates model.Coordinates) (mode
 
 	go func() {
 		logger.Info("requesting from weather endpoint")
-		weatherResult, err := h.weather.GetCurrent(coordinates)
+		weatherResult, err := h.Weather.GetCurrent(coordinates)
 		weatherChan <- weatherResult
 		errorsChan1 <- err
 		logger.Info("response from weather endpoint")
@@ -101,10 +101,10 @@ func NewDefaultISSVisible(
 ) DefaultISSVisible {
 
 	return DefaultISSVisible{
-		config:  config,
-		logger:  logger,
-		iss:     iss,
-		weather: weather,
+		Config:  config,
+		Logger:  logger,
+		ISS:     iss,
+		Weather: weather,
 	}
 }
 

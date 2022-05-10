@@ -9,23 +9,23 @@ type ConfigService interface {
 }
 
 type DefaultConfigService struct {
-	repo domain.ConfigRepository
+	Repo domain.ConfigRepository
 }
 
 func (s DefaultConfigService) GetString(id string) string {
-	return s.repo.GetString(id)
+	return s.Repo.GetString(id)
 }
 
 func (s DefaultConfigService) GetBool(id string) bool {
-	return s.repo.GetBool(id)
+	return s.Repo.GetBool(id)
 }
 
 func (s DefaultConfigService) GetInt(id string) int {
-	return s.repo.GetInt(id)
+	return s.Repo.GetInt(id)
 }
 
 func NewConfigService(repository domain.ConfigRepository) ConfigService {
 	return DefaultConfigService{
-		repo: repository,
+		Repo: repository,
 	}
 }

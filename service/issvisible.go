@@ -12,15 +12,15 @@ type ISSVisibleService interface {
 }
 
 type DefaultISSVisibleService struct {
-	repo domain.ISSVisibleRepository
+	Repo domain.ISSVisibleRepository
 }
 
 func (s DefaultISSVisibleService) GetISSVisible(now time.Time, coordinates model.Coordinates) (domain.ISSVisibleResult, error) {
-	return s.repo.GetISSVisible(now, coordinates)
+	return s.Repo.GetISSVisible(now, coordinates)
 }
 
 func NewISSVisibleService(repository domain.ISSVisibleRepository) ISSVisibleService {
 	return DefaultISSVisibleService{
-		repo: repository,
+		Repo: repository,
 	}
 }

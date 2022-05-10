@@ -7,7 +7,7 @@ import "net/http"
 //
 
 type DefaultHttpClient struct {
-	logger LoggerRepository
+	Logger LoggerRepository
 }
 
 func (s DefaultHttpClient) Get(url string) (*http.Response, error) {
@@ -16,6 +16,6 @@ func (s DefaultHttpClient) Get(url string) (*http.Response, error) {
 
 func NewDefaultHttpClient(logger LoggerRepository) DefaultHttpClient {
 	return DefaultHttpClient{
-		logger: logger,
+		Logger: logger,
 	}
 }
