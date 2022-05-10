@@ -67,7 +67,7 @@ func main() {
 	// 				200: ISSResult
 	// 				400: ErrorResponse
 	// 				500: ErrorResponse
-	mux.Get("/iss-position", composeHandler(addJsonHeader)(dh.ISSPosition))
+	mux.Get("/iss-position", handlers.ComposeHandlers(handlers.AddJsonHeader)(dh.ISSPosition))
 
 	// start server
 	port := configService.GetString("SERVER_PORT")
@@ -78,24 +78,6 @@ func main() {
 
 	if err != nil {
 		loggerService.Error("Error starting server", err.Error())
-	}
-}
-
-// Composes multiple handler functions together
-func composeHandler(manyHandlers ...func(http.HandlerFunc) http.HandlerFunc) func(http.HandlerFunc) http.HandlerFunc {
-	return func(h http.HandlerFunc) http.HandlerFunc {
-		for _, v := range manyHandlers {
-			h = v(h)
-		}
-		return h
-	}
-}
-
-// Middleware function, adds Content-Type of json to any response
-func addJsonHeader(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		next(w, r)
 	}
 }
 

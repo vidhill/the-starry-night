@@ -50,3 +50,21 @@ func getLatLongQueryParams(req *http.Request) (string, string) {
 
 	return lat, long
 }
+
+// Composes multiple handler functions together
+func ComposeHandlers(manyHandlers ...func(http.HandlerFunc) http.HandlerFunc) func(http.HandlerFunc) http.HandlerFunc {
+	return func(h http.HandlerFunc) http.HandlerFunc {
+		for _, v := range manyHandlers {
+			h = v(h)
+		}
+		return h
+	}
+}
+
+// Middleware function, adds Content-Type of json to any response
+func AddJsonHeader(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		next(w, r)
+	}
+}
