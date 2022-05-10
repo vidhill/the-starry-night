@@ -32,7 +32,7 @@
   - [ ] via (optional) query param
 - [x] function composition of handlers
 - [x] allow setting accuracy from ENV variable
-- [ ] Handle non-200 responses from external rest apis
+- [x] Handle non-200 responses from external rest apis
 - [ ] gzip compress response
 - [x] generate swagger docs
 - [ ] structured logging
