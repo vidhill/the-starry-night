@@ -31,13 +31,15 @@ func main() {
 
 	ISSRepository := rest_api_repository.NewISSRepositoryRest(configService, httpService, loggerService)
 	weatherRepository := rest_api_repository.NewWeatherbitRepository(configService, httpService, loggerService)
-	ISSVisibleRepo := domain.NewDefaultISSVisible(configService, loggerService, ISSRepository, weatherRepository)
 
 	ISSService := service.NewISSLocationService(ISSRepository)
 	weatherService := service.NewWeatherService(weatherRepository)
+
+	// todo remove one layer abstraction
+	ISSVisibleRepo := domain.NewDefaultISSVisible(configService, loggerService, ISSService, weatherService)
 	ISSVisibleService := service.NewISSVisibleService(ISSVisibleRepo)
 
-	dh := handlers.NewHandlers(configService, loggerService, ISSService, weatherService, ISSVisibleService)
+	dh := handlers.NewHandlers(loggerService, ISSVisibleService)
 
 	mux := chi.NewRouter()
 

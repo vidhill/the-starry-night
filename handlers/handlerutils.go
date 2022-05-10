@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/vidhill/the-starry-night/domain"
-	"github.com/vidhill/the-starry-night/model"
 	"github.com/vidhill/the-starry-night/utils"
 )
 
@@ -51,33 +49,4 @@ func getLatLongQueryParams(req *http.Request) (string, string) {
 	long := getQueryParam(req, "long")
 
 	return lat, long
-}
-
-func CheckISSVisible(position, ISSPosition model.Coordinates, weatherResult domain.WeatherResult, cloudCoverThreshold int, precision uint) bool {
-
-	if weatherResult.CloudCover >= cloudCoverThreshold {
-		return false
-	}
-
-	positionsMatch := MakeCoordinatesMatch(precision)
-
-	return positionsMatch(position, ISSPosition)
-}
-
-func MakeCoordinatesMatch(precision uint) func(model.Coordinates, model.Coordinates) bool {
-	positionsMatch := MakePositionMatch(precision)
-
-	return func(a, b model.Coordinates) bool {
-		if !positionsMatch(a.Latitude, b.Latitude) {
-			return false
-		}
-		return positionsMatch(a.Longitude, b.Longitude)
-	}
-}
-
-func MakePositionMatch(precision uint) func(a, b float64) bool {
-	roundToPrecision := utils.MakeRoundToNPlaces(precision)
-	return func(a, b float64) bool {
-		return roundToPrecision(a) == roundToPrecision(b)
-	}
 }
