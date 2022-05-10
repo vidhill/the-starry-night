@@ -26,7 +26,7 @@ setup-git-hooks:
 check-swagger:
 	which swagger || echo "Please install go swagger https://goswagger.io/install.html"
 
-scan-swagger:
+scan-swagger: download-swagger-ui
 	swagger generate spec -o $(SWAGGER_UI_FOLDER)/swagger.yaml --scan-models
 
 serve-swagger:
