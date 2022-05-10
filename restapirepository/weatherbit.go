@@ -55,7 +55,7 @@ func (s WeatherbitRepository) GetCurrent(location model.Coordinates) (domain.Wea
 
 	emptyResult := domain.WeatherResult{}
 
-	url := localConfig.currentWeatherUrl + getQueryParams(location, localConfig.apiKey)
+	url := localConfig.currentWeatherUrl + makeQueryParams(location, localConfig.apiKey)
 
 	response, err := s.http.Get(url)
 
@@ -136,7 +136,7 @@ func (s WeatherbitRepository) SummarizeResponse(res CurrentWeatherResponse) (dom
 	return result, nil
 }
 
-func getQueryParams(location model.Coordinates, apiKey string) string {
+func makeQueryParams(location model.Coordinates, apiKey string) string {
 
 	v := url.Values{}
 
