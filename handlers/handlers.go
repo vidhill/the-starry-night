@@ -82,11 +82,6 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 
 	res, err := h.ISSVisibleService.GetISSVisible(time.Now(), coordinates)
 
-	if err == service.ErrInvalidRequest {
-		handleInvalidRequest(w, req, "Invalid float values for lat/long query params")
-		return
-	}
-
 	if err != nil {
 		logger.Error(err.Error())
 		handleInternalServerError(w, req, "failed")
