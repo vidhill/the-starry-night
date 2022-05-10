@@ -41,11 +41,6 @@ func main() {
 
 	mux := chi.NewRouter()
 
-	loggerService.Debug("DEBUG Level")
-	loggerService.Info("INFO Level")
-	loggerService.Warn("WARN Level")
-	loggerService.Error("ERROR Level")
-
 	// Serve swagger-ui static files
 	mux.Handle(MakeSwaggerStaticServe(SWAGGER_ROOT))
 
