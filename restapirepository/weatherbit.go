@@ -13,27 +13,27 @@ import (
 	"github.com/vidhill/the-starry-night/model"
 )
 
+var (
+	// regex to match date portion from string formatted "2017-08-28 16:45"
+	dateRegex = regexp.MustCompile("^[0-9-]+")
+)
+
 type WeatherbitRepository struct {
-	config      domain.ConfigRepository
-	logger      domain.LoggerRepository
-	http        domain.HttpRepository
-	localConfig LocalConfig1
+	Config      domain.ConfigRepository
+	Logger      domain.LoggerRepository
+	Http        domain.HttpRepository
+	LocalConfig LocalWeatherConfig
 }
 
-type LocalConfig1 struct {
-	currentWeatherUrl string
-	apiKey            string
+type LocalWeatherConfig struct {
+	CurrentWeatherUrl string
+	ApiKey            string
 }
 
+// API response JSON struct
 type CurrentWeatherResponse struct {
 	Data  []InterestedData `json:"data"`
 	Count int              `json:"count"`
-}
-
-type Foo struct {
-	CloudCover int
-	Sunrise    *time.Time
-	Sunset     *time.Time
 }
 
 type InterestedData struct {
@@ -45,14 +45,14 @@ type InterestedData struct {
 
 func (s WeatherbitRepository) GetCurrent(location model.Coordinates) (domain.WeatherResult, error) {
 
-	localConfig := s.localConfig
-	logger := s.logger
+	localConfig := s.LocalConfig
+	logger := s.Logger
 
 	emptyResult := domain.WeatherResult{}
 
-	url := localConfig.currentWeatherUrl + getQueryParams(location, localConfig.apiKey)
+	url := localConfig.CurrentWeatherUrl + makeQueryParams(location, localConfig.ApiKey)
 
-	response, err := s.http.Get(url)
+	response, err := s.Http.Get(url)
 
 	if err != nil {
 		return emptyResult, err
@@ -82,23 +82,30 @@ func (s WeatherbitRepository) GetCurrent(location model.Coordinates) (domain.Wea
 
 }
 
+//
+// Repository 'Constructor' function
+//
 func NewWeatherbitRepository(config domain.ConfigRepository, http domain.HttpRepository, logger domain.LoggerRepository) WeatherbitRepository {
 
 	apiKey := config.GetString("WEATHER_BIT_API_KEY")
 	baseurl := config.GetString("WEATHER_BIT_API_BASE_URL")
 
-	localConfig := LocalConfig1{
-		currentWeatherUrl: baseurl + "/current?",
-		apiKey:            apiKey,
+	localConfig := LocalWeatherConfig{
+		CurrentWeatherUrl: baseurl + "/current?",
+		ApiKey:            apiKey,
 	}
 
 	return WeatherbitRepository{
-		config:      config,
-		logger:      logger,
-		http:        http,
-		localConfig: localConfig,
+		Config:      config,
+		Logger:      logger,
+		Http:        http,
+		LocalConfig: localConfig,
 	}
 }
+
+//
+// Helpers
+//
 
 func (s WeatherbitRepository) SummarizeResponse(res CurrentWeatherResponse) (domain.WeatherResult, error) {
 	emptyResult := domain.WeatherResult{}
@@ -124,7 +131,7 @@ func (s WeatherbitRepository) SummarizeResponse(res CurrentWeatherResponse) (dom
 	return result, nil
 }
 
-func getQueryParams(location model.Coordinates, apiKey string) string {
+func makeQueryParams(location model.Coordinates, apiKey string) string {
 
 	v := url.Values{}
 
@@ -152,11 +159,10 @@ func determineTimes(observerationTimeSt, sunrise, sunset string) (time.Time, tim
 }
 
 func extractDateString(date string) string {
-	re := regexp.MustCompile("[0-9-]+")
-	match := re.FindStringSubmatch(date)
+	dateMatch := dateRegex.FindStringSubmatch(date)
 
-	if len(match) == 1 {
-		return match[0]
+	if len(dateMatch) == 1 {
+		return dateMatch[0]
 	}
 	return ""
 

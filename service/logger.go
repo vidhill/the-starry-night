@@ -12,27 +12,27 @@ type LoggerService interface {
 }
 
 type DefaultLoggerService struct {
-	repo domain.LoggerRepository
+	Repo domain.LoggerRepository
 }
 
 func (l DefaultLoggerService) Debug(v ...interface{}) {
-	l.repo.Debug(v...)
+	l.Repo.Debug(v...)
 }
 
 func (l DefaultLoggerService) Info(v ...interface{}) {
-	l.repo.Info(v...)
+	l.Repo.Info(v...)
 }
 
 func (l DefaultLoggerService) Warn(v ...interface{}) {
-	l.repo.Warn(v...)
+	l.Repo.Warn(v...)
 }
 
 func (l DefaultLoggerService) Error(v ...interface{}) {
-	l.repo.Error(v...)
+	l.Repo.Error(v...)
 }
 
 func NewLoggerService(repository domain.LoggerRepository) LoggerService {
 	return DefaultLoggerService{
-		repo: repository,
+		Repo: repository,
 	}
 }

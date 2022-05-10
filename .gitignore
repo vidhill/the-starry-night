@@ -13,6 +13,9 @@
 
 settings_private.yaml
 
+# editor settings
+.vscode
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
 

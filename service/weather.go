@@ -10,15 +10,15 @@ type WeatherService interface {
 }
 
 type DefaultWeatherService struct {
-	repo domain.WeatherRepository
+	Repo domain.WeatherRepository
 }
 
 func (s DefaultWeatherService) GetCurrent(position model.Coordinates) (domain.WeatherResult, error) {
-	return s.repo.GetCurrent(position)
+	return s.Repo.GetCurrent(position)
 }
 
 func NewWeatherService(repository domain.WeatherRepository) WeatherService {
 	return DefaultWeatherService{
-		repo: repository,
+		Repo: repository,
 	}
 }

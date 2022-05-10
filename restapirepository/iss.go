@@ -11,10 +11,10 @@ import (
 )
 
 type ISSLocationRepositoryRest struct {
-	config      domain.ConfigRepository
-	http        domain.HttpRepository
-	localConfig LocalConfig
-	logger      domain.LoggerRepository
+	Config      domain.ConfigRepository
+	Http        domain.HttpRepository
+	LocalConfig LocalConfig
+	Logger      domain.LoggerRepository
 }
 
 type LocalConfig struct {
@@ -30,10 +30,10 @@ type ApiResponse struct {
 }
 
 func (s ISSLocationRepositoryRest) GetCurrentLocation() (model.Coordinates, error) {
-	logger := s.logger
+	logger := s.Logger
 	emptyResult := model.Coordinates{}
 
-	response, err := s.http.Get(s.localConfig.url)
+	response, err := s.Http.Get(s.LocalConfig.url)
 
 	if err != nil {
 		logger.Error("Error fetching", err.Error())
@@ -64,20 +64,29 @@ func (s ISSLocationRepositoryRest) GetCurrentLocation() (model.Coordinates, erro
 //
 // Repository 'Constructor' function
 //
-func NewISSRepositoryRest(config domain.ConfigRepository, http domain.HttpRepository, logger domain.LoggerRepository) ISSLocationRepositoryRest {
+func NewISSRepositoryRest(
+	config domain.ConfigRepository,
+	http domain.HttpRepository,
+	logger domain.LoggerRepository,
+) ISSLocationRepositoryRest {
+
 	localConfig := LocalConfig{
 		url: config.GetString("ISS_API_URL"),
 	}
 	return ISSLocationRepositoryRest{
-		config:      config,
-		http:        http,
-		localConfig: localConfig,
-		logger:      logger,
+		Config:      config,
+		Http:        http,
+		LocalConfig: localConfig,
+		Logger:      logger,
 	}
 }
 
+//
+// Helper functions
+//
+
 func (s ISSLocationRepositoryRest) SummarizeResponse(a ApiResponse) (model.Coordinates, error) {
-	logger := s.logger
+	logger := s.Logger
 	position := a.IssPosition
 
 	coordinates, err := utils.MakeCoordinatesFromString(position.Latitude, position.Longitude)

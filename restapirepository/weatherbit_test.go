@@ -40,3 +40,9 @@ func Test_DetermineIsNight_4(t *testing.T) {
 	res := utils.DetermineIsNight(observerationTime, sunriseTime, sunsetTime)
 	assert.True(t, res)
 }
+
+func Test_extractDateString(t *testing.T) {
+	res := extractDateString("2017-08-28 10:43")
+
+	assert.Equal(t, res, "2017-08-28")
+}

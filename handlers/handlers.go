@@ -2,31 +2,39 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
-	"github.com/vidhill/the-starry-night/domain"
-	"github.com/vidhill/the-starry-night/model"
 	"github.com/vidhill/the-starry-night/service"
 	"github.com/vidhill/the-starry-night/utils"
 )
 
-var okMessage = []byte("ok")
+var (
+	okMessage               = []byte("ok")
+	isValidLatitude         = utils.MakeCheckFloatInRange(90)
+	isValidLongitude        = utils.MakeCheckFloatInRange(180)
+	invalidLatitudeMessage  = makeOutsideBoundsMessage("latitude", 90)
+	invalidLongitudeMessage = makeOutsideBoundsMessage("longitude", 180)
+)
 
 type Handlers struct {
-	Config         service.ConfigService
-	ISSService     service.ISSLocationService
-	Logger         service.LoggerService
-	WeatherService service.WeatherService
+	Logger            service.LoggerService
+	ISSVisibleService service.ISSVisibleService
 }
 
 // swagger:parameters ISSRequest
 type ISSRequest struct {
 	// required: true
 	// example: 51.89764968941597
+	// min: -90
+	// max: 90
 	// In: query
 	Latitude float64 `json:"lat"`
 	// required: true
 	// example: -8.46828736406348
+	// min: -180
+	// max: 180
 	// In: query
 	Longitude float64 `json:"long"`
 }
@@ -41,8 +49,7 @@ func (s Handlers) Health(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
-	cloudCoverThreshold := h.Config.GetInt("CLOUD_COVER_THRESHOLD")
-	accuracyNumDecimalPlaces := uint(h.Config.GetInt("ACCURACY_NUM_DECIMAL_PLACES"))
+	logger := h.Logger
 
 	lat, long := getLatLongQueryParams(req)
 
@@ -63,20 +70,33 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ISSlocation, weatherResult, err := h.CallAPIsParallel(coordinates)
-
-	if err != nil {
-		handleInternalServerError(w, req, "failed")
+	if !isValidLatitude(coordinates.Latitude) {
+		handleInvalidRequest(w, req, invalidLatitudeMessage)
 		return
 	}
 
-	res := Result{
-		ISSOverhead: CheckISSVisible(coordinates, ISSlocation, weatherResult, cloudCoverThreshold, accuracyNumDecimalPlaces),
+	if !isValidLongitude(coordinates.Longitude) {
+		handleInvalidRequest(w, req, invalidLongitudeMessage)
+		return
+	}
+
+	res, err := h.ISSVisibleService.GetISSVisible(time.Now(), coordinates)
+
+	if err == service.ErrInvalidRequest {
+		handleInvalidRequest(w, req, "Invalid float values for lat/long query params")
+		return
+	}
+
+	if err != nil {
+		logger.Error(err.Error())
+		handleInternalServerError(w, req, "failed")
+		return
 	}
 
 	bs, err := json.Marshal(res)
 
 	if err != nil {
+		logger.Error(err.Error())
 		handleInternalServerError(w, req, "Internal server error")
 		return
 	}
@@ -85,65 +105,17 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 	w.Write(bs)
 }
 
-func (h Handlers) CallAPIsParallel(coordinates model.Coordinates) (model.Coordinates, domain.WeatherResult, error) {
-	logger := h.Logger
-
-	coordinatesChan := make(chan model.Coordinates, 1)
-	weatherChan := make(chan domain.WeatherResult, 1)
-	errorsChan := make(chan error, 1)
-	errorsChan1 := make(chan error, 1)
-
-	go func() {
-		logger.Info("requesting from ISS endpoint")
-		ISSlocation, err := h.ISSService.GetCurrentLocation()
-		coordinatesChan <- ISSlocation
-		errorsChan <- err
-		logger.Info("response from ISS endpoint")
-	}()
-
-	go func() {
-		logger.Info("requesting from weather endpoint")
-		weatherResult, err := h.WeatherService.GetCurrent(coordinates)
-		weatherChan <- weatherResult
-		errorsChan1 <- err
-		logger.Info("response from weather endpoint")
-	}()
-
-	ISSlocation := <-coordinatesChan
-	issErr := <-errorsChan
-
-	weatherResult := <-weatherChan
-	weatherErr := <-errorsChan1
-
-	close(coordinatesChan)
-	close(weatherChan)
-	close(errorsChan)
-	close(errorsChan1)
-
-	if issErr != nil {
-		logger.Error(issErr)
-		return ISSlocation, weatherResult, issErr
-	}
-
-	if weatherErr != nil {
-		logger.Error(weatherErr)
-		return ISSlocation, weatherResult, weatherErr
-	}
-
-	return ISSlocation, weatherResult, nil
-}
-
 func NewHandlers(
-	config service.ConfigService,
 	logger service.LoggerService,
-	issService service.ISSLocationService,
-	weatherService service.WeatherService,
+	ISSVisible service.ISSVisibleService,
 ) Handlers {
 
 	return Handlers{
-		Config:         config,
-		Logger:         logger,
-		ISSService:     issService,
-		WeatherService: weatherService,
+		Logger:            logger,
+		ISSVisibleService: ISSVisible,
 	}
+}
+
+func makeOutsideBoundsMessage(name string, i int) string {
+	return fmt.Sprintf("Invalid values for %s, value should value should not be greater/less than %v", name, i)
 }

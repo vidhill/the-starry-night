@@ -11,15 +11,15 @@ type HttpService interface {
 }
 
 type DefaultHttpService struct {
-	repo domain.HttpRepository
+	Repo domain.HttpRepository
 }
 
 func (s DefaultHttpService) Get(url string) (*http.Response, error) {
-	return s.repo.Get(url)
+	return s.Repo.Get(url)
 }
 
 func NewHttpService(repository domain.HttpRepository) HttpService {
 	return DefaultHttpService{
-		repo: repository,
+		Repo: repository,
 	}
 }
