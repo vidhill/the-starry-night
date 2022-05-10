@@ -31,11 +31,13 @@ func main() {
 
 	ISSRepository := rest_api_repository.NewISSRepositoryRest(configService, httpService, loggerService)
 	weatherRepository := rest_api_repository.NewWeatherbitRepository(configService, httpService, loggerService)
+	ISSVisibleRepo := domain.NewDefaultISSVisible(configService, loggerService, ISSRepository, weatherRepository)
 
 	ISSService := service.NewISSLocationService(ISSRepository)
 	weatherService := service.NewWeatherService(weatherRepository)
+	ISSVisibleService := service.NewISSVisibleService(ISSVisibleRepo)
 
-	dh := handlers.NewHandlers(configService, loggerService, ISSService, weatherService)
+	dh := handlers.NewHandlers(configService, loggerService, ISSService, weatherService, ISSVisibleService)
 
 	mux := chi.NewRouter()
 
