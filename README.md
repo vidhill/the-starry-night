@@ -33,12 +33,13 @@ to create the file run `make create-settings-private`
 
 # Prerequisites
 
-|            |             |                                                   |
-| ---------- | ----------- | ------------------------------------------------- |
-| go         | min `v1.17` |                                                   |
-| go-swagger |             | [installation](https://goswagger.io/install.html) |
-| air        |             | run: `go install github.com/cosmtrek/air@latest`  |
-|            |
+|                  |                                                               |
+| ---------------- | ------------------------------------------------------------- |
+| go (min `v1.17`) |                                                               |
+| go-swagger       | [installation](https://goswagger.io/install.html)             |
+| forbidigo        | run: `go install github.com/ashanbrown/forbidigo@v1.3.0`      |
+| staticcheck      | run: `go install honnef.co/go/tools/cmd/staticcheck@2022.1.1` |
+| air              | run: `go install github.com/cosmtrek/air@latest`              |
 
 To check if you have the required dependencies installed run `make check.dependencies`
 
