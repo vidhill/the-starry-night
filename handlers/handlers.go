@@ -49,6 +49,7 @@ func (s Handlers) Health(w http.ResponseWriter, req *http.Request) {
 }
 
 func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
+	logger := h.Logger
 
 	lat, long := getLatLongQueryParams(req)
 
@@ -87,6 +88,7 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if err != nil {
+		logger.Error(err.Error())
 		handleInternalServerError(w, req, "failed")
 		return
 	}
@@ -94,6 +96,7 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 	bs, err := json.Marshal(res)
 
 	if err != nil {
+		logger.Error(err.Error())
 		handleInternalServerError(w, req, "Internal server error")
 		return
 	}
