@@ -1,5 +1,3 @@
-//go:build integration
-
 package main
 
 import (
@@ -23,13 +21,7 @@ func Test_valid_request(t *testing.T) {
 		assert.FailNow(t, err.Error())
 	}
 
-	if response.StatusCode != http.StatusOK {
-		errMessage := "non success response code received from api"
-		log.Println(errMessage)
-
-		assert.FailNow(t, errMessage)
-		return
-	}
+	assertStatusCode(t, http.StatusOK, response)
 
 	contentTypeHeaders := response.Header.Values("Content-type")
 
@@ -52,11 +44,27 @@ func Test_invalid_request(t *testing.T) {
 		assert.FailNow(t, err.Error())
 	}
 
-	assert.Equal(t, http.StatusBadRequest, response.StatusCode)
+	assertStatusCode(t, http.StatusBadRequest, response)
+}
 
-	contentTypeHeaders := response.Header.Values("Content-type")
+func Test_invalid_request_out_range_lat_long(t *testing.T) {
+	response, err := http.Get("http://localhost:8080/iss-position?lat=100&long=-8")
 
-	assert.Len(t, contentTypeHeaders, 1)
-	assert.Equal(t, "application/json", contentTypeHeaders[0])
+	if err != nil {
+		log.Println("Error fetching", err.Error())
+		assert.FailNow(t, err.Error())
+	}
 
+	assertStatusCode(t, http.StatusAlreadyReported, response)
+
+}
+
+func assertStatusCode(t *testing.T, expected int, response *http.Response) {
+	if response == nil {
+		assert.FailNow(t, "no http.Response pointer was passed to assertion")
+		return
+	}
+
+	actual := response.StatusCode
+	assert.Equalf(t, expected, actual, `expected to return a response with the status code %v, actual response status was %v`, expected, actual)
 }
