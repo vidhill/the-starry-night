@@ -28,7 +28,7 @@
 
 ### MVP
 
-- [ ] Configurable accuracy of overhead via ENV Variable
+- [x] Configurable accuracy of overhead via ENV Variable
   - [ ] via (optional) query param
 - [x] function composition of handlers
 - [ ] allow setting accuracy from ENV variable
