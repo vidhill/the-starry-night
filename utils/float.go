@@ -21,3 +21,18 @@ func MakeRoundToNPlaces(places uint) func(f float64) float64 {
 		return res
 	}
 }
+
+// returns a function that checks if a float
+// 	is not
+//     greater than the value, or
+//     less than the negative
+func MakeCheckFloatInRange(i int) func(float64) bool {
+	bounds := float64(i)
+	lowerBound := -1 * bounds
+	return func(f float64) bool {
+		if f < lowerBound || f > bounds {
+			return false
+		}
+		return true
+	}
+}

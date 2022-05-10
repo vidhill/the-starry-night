@@ -12,8 +12,8 @@ import (
 
 var (
 	okMessage               = []byte("ok")
-	isValidLatitude         = utils.MakeValidate(90)
-	isValidLongitude        = utils.MakeValidate(180)
+	isValidLatitude         = utils.MakeCheckFloatInRange(90)
+	isValidLongitude        = utils.MakeCheckFloatInRange(180)
 	invalidLatitudeMessage  = makeOutsideBoundsMessage("latitude", 90)
 	invalidLongitudeMessage = makeOutsideBoundsMessage("longitude", 180)
 )
