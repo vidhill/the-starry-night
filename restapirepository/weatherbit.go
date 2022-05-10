@@ -13,6 +13,11 @@ import (
 	"github.com/vidhill/the-starry-night/model"
 )
 
+var (
+	// regex to match date portion from string formatted "2017-08-28 16:45"
+	dateRegex = regexp.MustCompile("^[0-9-]+")
+)
+
 type WeatherbitRepository struct {
 	config      domain.ConfigRepository
 	logger      domain.LoggerRepository
@@ -159,11 +164,10 @@ func determineTimes(observerationTimeSt, sunrise, sunset string) (time.Time, tim
 }
 
 func extractDateString(date string) string {
-	re := regexp.MustCompile("[0-9-]+")
-	match := re.FindStringSubmatch(date)
+	dateMatch := dateRegex.FindStringSubmatch(date)
 
-	if len(match) == 1 {
-		return match[0]
+	if len(dateMatch) == 1 {
+		return dateMatch[0]
 	}
 	return ""
 
