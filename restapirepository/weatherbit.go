@@ -35,12 +35,6 @@ type CurrentWeatherResponse struct {
 	Count int              `json:"count"`
 }
 
-type Foo struct {
-	CloudCover int
-	Sunrise    *time.Time
-	Sunset     *time.Time
-}
-
 type InterestedData struct {
 	Clouds  int    `json:"clouds"`
 	Sunrise string `json:"sunrise"`
