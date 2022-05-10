@@ -33,10 +33,14 @@ to create the file run `make create-settings-private`
 
 # Prerequisites
 
-- `go` version `1.17`+
-- `go-swagger` [installation](https://goswagger.io/install.html)
-- Recommended
-  - For live-reload during development `air` to install run: `go install github.com/cosmtrek/air@latest`
+|            |             |                                                   |
+| ---------- | ----------- | ------------------------------------------------- |
+| go         | min `v1.17` |                                                   |
+| go-swagger |             | [installation](https://goswagger.io/install.html) |
+| air        |             | run: `go install github.com/cosmtrek/air@latest`  |
+|            |
+
+To check if you have the required dependencies installed run `make check.dependencies`
 
 # Tests
 
