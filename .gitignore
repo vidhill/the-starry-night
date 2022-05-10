@@ -16,6 +16,10 @@ settings_private.yaml
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+swagger-ui
+swagger-ui.zip
+swagger-ui-bundle
+
 cmd/webapp/tmp
 tmp/
 main
