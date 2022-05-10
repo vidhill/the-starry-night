@@ -35,9 +35,7 @@ func main() {
 	ISSService := service.NewISSLocationService(ISSRepository)
 	weatherService := service.NewWeatherService(weatherRepository)
 
-	// todo remove one layer abstraction
-	ISSVisibleRepo := domain.NewDefaultISSVisible(configService, loggerService, ISSService, weatherService)
-	ISSVisibleService := service.NewISSVisibleService(ISSVisibleRepo)
+	ISSVisibleService := service.NewISSVisibleService(configService, loggerService, ISSService, weatherService)
 
 	dh := handlers.NewHandlers(loggerService, ISSVisibleService)
 
