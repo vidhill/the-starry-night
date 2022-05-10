@@ -1,9 +1,12 @@
 package domain
 
 import (
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/vidhill/the-starry-night/model"
+	"github.com/vidhill/the-starry-night/utils"
 )
 
 type DefaultISSVisible struct {
@@ -14,7 +17,25 @@ type DefaultISSVisible struct {
 }
 
 func (s DefaultISSVisible) GetISSVisible(now time.Time, coordinates model.Coordinates) (ISSVisibleResult, error) {
-	return ISSVisibleResult{}, nil
+	ISSlocation, weatherResult, err := s.CallAPIsParallel(coordinates)
+
+	if err != nil {
+		return ISSVisibleResult{}, err
+	}
+
+	cloudCoverThreshold := s.config.GetInt("CLOUD_COVER_THRESHOLD")
+	accuracyNumDecimalPlaces := uint(s.config.GetInt("ACCURACY_NUM_DECIMAL_PLACES"))
+
+	res := ISSVisibleResult{
+		ISSOverhead: CheckISSVisible(
+			coordinates,
+			ISSlocation,
+			weatherResult,
+			cloudCoverThreshold,
+			accuracyNumDecimalPlaces),
+	}
+
+	return res, nil
 }
 
 func (h DefaultISSVisible) CallAPIsParallel(coordinates model.Coordinates) (model.Coordinates, WeatherResult, error) {
@@ -84,5 +105,34 @@ func NewDefaultISSVisible(
 		logger:  logger,
 		iss:     iss,
 		weather: weather,
+	}
+}
+
+func CheckISSVisible(position, ISSPosition model.Coordinates, weatherResult WeatherResult, cloudCoverThreshold int, precision uint) bool {
+
+	if weatherResult.CloudCover >= cloudCoverThreshold {
+		return false
+	}
+
+	positionsMatch := MakeCoordinatesMatch(precision)
+
+	return positionsMatch(position, ISSPosition)
+}
+
+func MakeCoordinatesMatch(precision uint) func(model.Coordinates, model.Coordinates) bool {
+	positionsMatch := MakePositionMatch(precision)
+
+	return func(a, b model.Coordinates) bool {
+		if !positionsMatch(a.Latitude, b.Latitude) {
+			return false
+		}
+		return positionsMatch(a.Longitude, b.Longitude)
+	}
+}
+
+func MakePositionMatch(precision uint) func(a, b float64) bool {
+	roundToPrecision := utils.MakeRoundToNPlaces(precision)
+	return func(a, b float64) bool {
+		return roundToPrecision(a) == roundToPrecision(b)
 	}
 }
