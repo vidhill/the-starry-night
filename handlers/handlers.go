@@ -137,16 +137,16 @@ func (h Handlers) CallAPIsParallel(coordinates model.Coordinates) (model.Coordin
 func NewHandlers(
 	config service.ConfigService,
 	logger service.LoggerService,
-	issService service.ISSLocationService,
-	weatherService service.WeatherService,
-	ISSVisibleService service.ISSVisibleService,
+	iss service.ISSLocationService,
+	weather service.WeatherService,
+	ISSVisible service.ISSVisibleService,
 ) Handlers {
 
 	return Handlers{
 		Config:            config,
 		Logger:            logger,
-		ISSService:        issService,
-		WeatherService:    weatherService,
-		ISSVisibleService: ISSVisibleService,
+		ISSService:        iss,
+		WeatherService:    weather,
+		ISSVisibleService: ISSVisible,
 	}
 }
