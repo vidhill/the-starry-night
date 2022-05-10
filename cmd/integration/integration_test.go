@@ -57,7 +57,7 @@ func Test_invalid_request_out_range_lat_long(t *testing.T) {
 		assert.FailNow(t, err.Error())
 	}
 
-	assertStatusCode(t, http.StatusAlreadyReported, response)
+	assertStatusCode(t, http.StatusBadRequest, response)
 
 }
 
