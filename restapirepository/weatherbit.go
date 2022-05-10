@@ -30,6 +30,7 @@ type LocalConfig1 struct {
 	apiKey            string
 }
 
+// API response JSON struct
 type CurrentWeatherResponse struct {
 	Data  []InterestedData `json:"data"`
 	Count int              `json:"count"`
