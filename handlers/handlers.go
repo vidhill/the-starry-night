@@ -13,10 +13,11 @@ import (
 var okMessage = []byte("ok")
 
 type Handlers struct {
-	Config         service.ConfigService
-	ISSService     service.ISSLocationService
-	Logger         service.LoggerService
-	WeatherService service.WeatherService
+	Config            service.ConfigService
+	ISSService        service.ISSLocationService
+	Logger            service.LoggerService
+	WeatherService    service.WeatherService
+	ISSVisibleService service.ISSVisibleService
 }
 
 // swagger:parameters ISSRequest
@@ -138,12 +139,14 @@ func NewHandlers(
 	logger service.LoggerService,
 	issService service.ISSLocationService,
 	weatherService service.WeatherService,
+	ISSVisibleService service.ISSVisibleService,
 ) Handlers {
 
 	return Handlers{
-		Config:         config,
-		Logger:         logger,
-		ISSService:     issService,
-		WeatherService: weatherService,
+		Config:            config,
+		Logger:            logger,
+		ISSService:        issService,
+		WeatherService:    weatherService,
+		ISSVisibleService: ISSVisibleService,
 	}
 }
