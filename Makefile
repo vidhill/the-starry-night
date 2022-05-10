@@ -15,10 +15,10 @@ dev:
 	air
 
 test:
-	go test ./...
+	go test $(shell go list ./... | grep -v /integration) -coverprofile .testCoverage.txt
 
 integration-test:
-	go test -tags="integration" cmd/integration/*.go
+	go test $(shell go list ./... | grep /integration)
 
 setup-git-hooks:
 	cp git-hooks/pre-push.sh .git/hooks/pre-push

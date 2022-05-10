@@ -19,7 +19,7 @@ func main() {
 
 	// wiring
 	configService := service.NewConfigService(domain.NewViperConfig())
-	loggerService := service.NewLoggerService(domain.NewStandardLogger())
+	loggerService := service.NewLoggerService(domain.NewStandardLogger(), configService.GetString("LOG_LEVEL"))
 
 	configErr := validateEnvVariables(configService)
 	if configErr != nil {
@@ -40,6 +40,11 @@ func main() {
 	dh := handlers.NewHandlers(loggerService, ISSVisibleService)
 
 	mux := chi.NewRouter()
+
+	loggerService.Debug("DEBUG Level")
+	loggerService.Info("INFO Level")
+	loggerService.Warn("WARN Level")
+	loggerService.Error("ERROR Level")
 
 	// Serve swagger-ui static files
 	mux.Handle(MakeSwaggerStaticServe(SWAGGER_ROOT))

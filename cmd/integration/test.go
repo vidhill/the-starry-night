@@ -11,7 +11,7 @@ import (
 
 func main() {
 	configService := service.NewConfigService(domain.NewViperConfig())
-	loggerService := service.NewLoggerService(domain.NewStandardLogger())
+	loggerService := service.NewLoggerService(domain.NewStandardLogger(), configService.GetString("LOG_LEVEL"))
 	httpService := service.NewHttpService(domain.NewDefaultHttpClient(loggerService))
 
 	cliArgs := os.Args[1:]
