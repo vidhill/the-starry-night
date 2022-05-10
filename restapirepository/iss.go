@@ -64,7 +64,12 @@ func (s ISSLocationRepositoryRest) GetCurrentLocation() (model.Coordinates, erro
 //
 // Repository 'Constructor' function
 //
-func NewISSRepositoryRest(config domain.ConfigRepository, http domain.HttpRepository, logger domain.LoggerRepository) ISSLocationRepositoryRest {
+func NewISSRepositoryRest(
+	config domain.ConfigRepository,
+	http domain.HttpRepository,
+	logger domain.LoggerRepository,
+) ISSLocationRepositoryRest {
+
 	localConfig := LocalConfig{
 		url: config.GetString("ISS_API_URL"),
 	}
@@ -75,6 +80,10 @@ func NewISSRepositoryRest(config domain.ConfigRepository, http domain.HttpReposi
 		logger:      logger,
 	}
 }
+
+//
+// Helper functions
+//
 
 func (s ISSLocationRepositoryRest) SummarizeResponse(a ApiResponse) (model.Coordinates, error) {
 	logger := s.logger
