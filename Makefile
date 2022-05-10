@@ -30,8 +30,6 @@ scan-swagger: check.swagger download-swagger-ui
 serve-swagger:
 	swagger serve -F=swagger $(SWAGGER_UI_FOLDER)/swagger.yaml
 
-scan-serve-swagger: check-swagger scan-swagger serve-swagger
-
 download-extract-ui:
 	curl -L -o swagger-ui.tar.gz https://github.com/swagger-api/swagger-ui/archive/refs/tags/v4.1.3.tar.gz
 	mkdir -p swagger-ui-bundle
