@@ -24,7 +24,7 @@ setup-git-hooks:
 	cp git-hooks/pre-push.sh .git/hooks/pre-push
 
 check-swagger:
-	which swagger || echo "Please install go swagger"
+	which swagger || echo "Please install go swagger https://goswagger.io/install.html"
 
 scan-swagger:
 	swagger generate spec -o $(SWAGGER_UI_FOLDER)/swagger.yaml --scan-models
