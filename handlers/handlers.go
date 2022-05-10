@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -9,7 +10,13 @@ import (
 	"github.com/vidhill/the-starry-night/utils"
 )
 
-var okMessage = []byte("ok")
+var (
+	okMessage               = []byte("ok")
+	isValidLatitude         = utils.MakeValidate(90)
+	isValidLongitude        = utils.MakeValidate(180)
+	invalidLatitudeMessage  = makeOutsideBoundsMessage("latitude", 90)
+	invalidLongitudeMessage = makeOutsideBoundsMessage("longitude", 180)
+)
 
 type Handlers struct {
 	Logger            service.LoggerService
@@ -20,10 +27,14 @@ type Handlers struct {
 type ISSRequest struct {
 	// required: true
 	// example: 51.89764968941597
+	// min: -90
+	// max: 90
 	// In: query
 	Latitude float64 `json:"lat"`
 	// required: true
 	// example: -8.46828736406348
+	// min: -180
+	// max: 180
 	// In: query
 	Longitude float64 `json:"long"`
 }
@@ -58,7 +69,22 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	if !isValidLatitude(coordinates.Latitude) {
+		handleInvalidRequest(w, req, invalidLatitudeMessage)
+		return
+	}
+
+	if !isValidLongitude(coordinates.Longitude) {
+		handleInvalidRequest(w, req, invalidLongitudeMessage)
+		return
+	}
+
 	res, err := h.ISSVisibleService.GetISSVisible(time.Now(), coordinates)
+
+	if err == service.ErrInvalidRequest {
+		handleInvalidRequest(w, req, "Invalid float values for lat/long query params")
+		return
+	}
 
 	if err != nil {
 		handleInternalServerError(w, req, "failed")
@@ -85,4 +111,8 @@ func NewHandlers(
 		Logger:            logger,
 		ISSVisibleService: ISSVisible,
 	}
+}
+
+func makeOutsideBoundsMessage(name string, i int) string {
+	return fmt.Sprintf("Invalid values for %s, value should value should not be greater/less than %v", name, i)
 }
