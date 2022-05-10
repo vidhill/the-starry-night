@@ -31,5 +31,5 @@ func Test_MakeRoundToNPlaces(t *testing.T) {
 func Test_MakeRoundToNPlaces_1(t *testing.T) {
 	roundToNPlaces := MakeRoundToNPlaces(0)
 	res := roundToNPlaces(51.12345)
-	assert.Equal(t, float32(51), res)
+	assert.Equal(t, float64(51), res)
 }
