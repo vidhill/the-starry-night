@@ -43,6 +43,7 @@ download-extract-ui:
 
 download-swagger-ui:
   ifeq ($(wildcard $(SWAGGER_UI_FOLDER)),) # only create if does not exist
+		$(info downloading an extracting swagger-ui)
 		@make download-extract-ui
 		sed 's/https:\/\/petstore.swagger.io\/v2\/swagger.json/swagger.yaml/' $(SWAGGER_UI_FOLDER)/index.html > $(SWAGGER_UI_FOLDER)/index_temp.html
 		mv $(SWAGGER_UI_FOLDER)/index_temp.html $(SWAGGER_UI_FOLDER)/index.html
@@ -50,8 +51,12 @@ download-swagger-ui:
 	@make cleanup-download-swagger-ui
 
 cleanup-download-swagger-ui:
-	rm -rf swagger-ui.tar.gz
-	rm -rf swagger-ui-bundle
+  ifneq ($(wildcard swagger-ui.tar.gz),) # only delte if exists
+		rm -rf swagger-ui.tar.gz
+  endif
+  ifneq ($(wildcard swagger-ui-bundle),)  # only delte if exists
+		rm -rf swagger-ui-bundle
+  endif
 
 create-settings-private:
   ifeq ($(wildcard $(SETTINGS_PRIVATE)),) # only create if does not exist
