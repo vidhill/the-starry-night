@@ -10,8 +10,8 @@ import (
 	"github.com/vidhill/the-starry-night/domain"
 	"github.com/vidhill/the-starry-night/handlers"
 	"github.com/vidhill/the-starry-night/middleware"
-	rest_api_repository "github.com/vidhill/the-starry-night/restapirepository"
 	"github.com/vidhill/the-starry-night/service"
+	"github.com/vidhill/the-starry-night/stubrepository"
 )
 
 const SWAGGER_ROOT = "swagger-ui"
@@ -28,10 +28,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	httpService := service.NewHttpService(domain.NewDefaultHttpClient(loggerService))
+	// httpService := service.NewHttpService(domain.NewDefaultHttpClient(loggerService))
 
-	ISSRepository := rest_api_repository.NewISSRepositoryRest(configService, httpService, loggerService)
-	weatherRepository := rest_api_repository.NewWeatherbitRepository(configService, httpService, loggerService)
+	// ISSRepository := rest_api_repository.NewISSRepositoryRest(configService, httpService, loggerService)
+	ISSRepository := stubrepository.NewISSRepositoryStub(loggerService)
+
+	// weatherRepository := rest_api_repository.NewWeatherbitRepository(configService, httpService, loggerService)
+	weatherRepository := stubrepository.NewStubWeatherRepository(loggerService)
 
 	ISSService := service.NewISSLocationService(ISSRepository)
 	weatherService := service.NewWeatherService(weatherRepository)
