@@ -2,7 +2,7 @@ ROOT_PATH=cmd/webapp/main.go
 SETTINGS_PRIVATE=settings_private.yaml
 SWAGGER_UI_FOLDER=swagger-ui
 
-default: pre-build download-swagger-ui scan-swagger
+default: pre-build swagger.download-ui scan-swagger
 	go build $(ROOT_PATH)
 
 pre-build:
@@ -24,7 +24,7 @@ setup-git-hooks:
 	cp git-hooks/pre-push.sh .git/hooks/pre-push
 
 
-scan-swagger: check.swagger download-swagger-ui
+scan-swagger: check.swagger swagger.download-ui
 	swagger generate spec -o $(SWAGGER_UI_FOLDER)/swagger.yaml --scan-models
 
 serve-swagger:
@@ -37,7 +37,7 @@ download-extract-ui:
 	mkdir -p $(SWAGGER_UI_FOLDER)
 	mv swagger-ui-bundle/dist/* $(SWAGGER_UI_FOLDER)
 
-download-swagger-ui:
+swagger.download-ui:
   ifeq ($(wildcard $(SWAGGER_UI_FOLDER)),) # only create if does not exist
 		$(info downloading an extracting swagger-ui)
 		@make download-extract-ui
