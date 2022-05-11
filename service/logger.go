@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/vidhill/the-starry-night/domain"
 )
 
