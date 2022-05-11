@@ -33,7 +33,7 @@ to create the file run `make create-settings-private`
 
 # Prerequisites
 
-|                  |                                                               |
+| Dependency       | Installation                                                  |
 | ---------------- | ------------------------------------------------------------- |
 | go (min `v1.17`) |                                                               |
 | go-swagger       | [installation](https://goswagger.io/install.html)             |
