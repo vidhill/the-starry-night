@@ -2,7 +2,7 @@ ROOT_PATH=cmd/webapp/main.go
 SETTINGS_PRIVATE=settings_private.yaml
 SWAGGER_UI_FOLDER=swagger-ui
 
-default: pre-build swagger.download-ui scan-swagger
+default: pre-build swagger.download-ui swagger.scan
 	go build $(ROOT_PATH)
 
 pre-build:
@@ -24,13 +24,10 @@ setup-git-hooks:
 	cp git-hooks/pre-push.sh .git/hooks/pre-push
 
 
-scan-swagger: check.swagger swagger.download-ui
+swagger.scan: check.swagger swagger.download-ui
 	swagger generate spec -o $(SWAGGER_UI_FOLDER)/swagger.yaml --scan-models
 
-serve-swagger:
-	swagger serve -F=swagger $(SWAGGER_UI_FOLDER)/swagger.yaml
-
-download-extract-ui:
+swagger.download-extract-ui:
 	curl -L -o swagger-ui.tar.gz https://github.com/swagger-api/swagger-ui/archive/refs/tags/v4.1.3.tar.gz
 	mkdir -p swagger-ui-bundle
 	tar -xzf swagger-ui.tar.gz -C swagger-ui-bundle --strip-components 1
@@ -39,14 +36,14 @@ download-extract-ui:
 
 swagger.download-ui:
   ifeq ($(wildcard $(SWAGGER_UI_FOLDER)),) # only create if does not exist
-		$(info downloading an extracting swagger-ui)
-		@make download-extract-ui
+		$(info downloading and extracting swagger-ui)
+		@make swagger.download-extract-ui
 		sed 's/https:\/\/petstore.swagger.io\/v2\/swagger.json/swagger.yaml/' $(SWAGGER_UI_FOLDER)/index.html > $(SWAGGER_UI_FOLDER)/index_temp.html
 		mv $(SWAGGER_UI_FOLDER)/index_temp.html $(SWAGGER_UI_FOLDER)/index.html
   endif
-	@make cleanup-download-swagger-ui
+	@make swagger.cleanup-download-ui
 
-cleanup-download-swagger-ui:
+swagger.cleanup-download-ui:
   ifneq ($(wildcard swagger-ui.tar.gz),) # only delte if exists
 		rm -rf swagger-ui.tar.gz
   endif
