@@ -1,5 +1,7 @@
 # the-starry-night
 
+REST api written in golang that indicates whether the ISS is visible overhead
+
 ### Build
 
 1. To build executable run `make` from the root directory
