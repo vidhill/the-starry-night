@@ -12,9 +12,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	defaultBaseUrl = "http://localhost:8080"
+	baseUrl        = setBaseUrl(defaultBaseUrl)
+)
+
 // SMOKE TEST
 func Test_valid_request(t *testing.T) {
-	response, err := http.Get("http://localhost:8080/iss-position?lat=51.89764968941597&long=-8.46828736406348")
+
+	assert.FailNow(t, "")
+	response, err := http.Get(baseUrl + "/iss-position?lat=51.89764968941597&long=-8.46828736406348")
 
 	if err != nil {
 		log.Println("Error fetching", err.Error())
@@ -37,7 +44,7 @@ func Test_valid_request(t *testing.T) {
 }
 
 func Test_invalid_request(t *testing.T) {
-	response, err := http.Get("http://localhost:8080/iss-position")
+	response, err := http.Get(baseUrl + "/iss-position")
 
 	if err != nil {
 		log.Println("Error fetching", err.Error())
@@ -48,7 +55,7 @@ func Test_invalid_request(t *testing.T) {
 }
 
 func Test_invalid_request_out_range_lat_long(t *testing.T) {
-	response, err := http.Get("http://localhost:8080/iss-position?lat=100&long=-8")
+	response, err := http.Get(baseUrl + "/iss-position?lat=100&long=-8")
 
 	if err != nil {
 		log.Println("Error fetching", err.Error())
@@ -67,4 +74,14 @@ func assertStatusCode(t *testing.T, expected int, response *http.Response) {
 
 	actual := response.StatusCode
 	assert.Equalf(t, expected, actual, `expected to return a response with the status code %v, actual response status was %v`, expected, actual)
+}
+
+func setBaseUrl(defaultBaseUrl string) string {
+	host := os.Getenv("INTEGRATION_TEST_HOSTNAME")
+
+	if host == "" {
+		return defaultBaseUrl
+	}
+	// todo should validate using regex
+	return host
 }
