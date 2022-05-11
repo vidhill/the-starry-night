@@ -27,7 +27,6 @@ type DefaultLoggerService struct {
 }
 
 func (l DefaultLoggerService) Debug(v ...interface{}) {
-	fmt.Println(l.Loglevel, DEBUG)
 	if l.Loglevel > DEBUG {
 		l.Repo.Debug(v...)
 	}
