@@ -45,7 +45,6 @@ func (s ISSVisibleService) GetISSVisible(now time.Time, coordinates model.Coordi
 }
 
 func (h ISSVisibleService) CallAPIsParallel(coordinates model.Coordinates) (model.Coordinates, domain.WeatherResult, error) {
-	logger := h.Logger
 
 	coordinatesChan := make(chan model.Coordinates, 1)
 	weatherChan := make(chan domain.WeatherResult, 1)
@@ -53,19 +52,15 @@ func (h ISSVisibleService) CallAPIsParallel(coordinates model.Coordinates) (mode
 	errorsChan1 := make(chan error, 1)
 
 	go func() {
-		logger.Info("requesting from ISS endpoint")
 		ISSlocation, err := h.ISSLocation.GetCurrentLocation()
 		coordinatesChan <- ISSlocation
 		errorsChan <- err
-		logger.Info("response from ISS endpoint")
 	}()
 
 	go func() {
-		logger.Info("requesting from weather endpoint")
 		weatherResult, err := h.Weather.GetCurrent(coordinates)
 		weatherChan <- weatherResult
 		errorsChan1 <- err
-		logger.Info("response from weather endpoint")
 	}()
 
 	ISSlocation := <-coordinatesChan

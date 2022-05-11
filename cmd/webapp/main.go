@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/vidhill/the-starry-night/domain"
 	"github.com/vidhill/the-starry-night/handlers"
+	"github.com/vidhill/the-starry-night/middleware"
 	rest_api_repository "github.com/vidhill/the-starry-night/restapirepository"
 	"github.com/vidhill/the-starry-night/service"
 )
@@ -36,10 +37,14 @@ func main() {
 	weatherService := service.NewWeatherService(weatherRepository)
 
 	ISSVisibleService := service.NewISSVisibleService(configService, loggerService, ISSService, weatherService)
+	// custom middleware to log using the wrapped logger service
+	customLogMiddleware := middleware.MakeMyLoggerMiddleware(loggerService)
 
 	dh := handlers.NewHandlers(loggerService, ISSVisibleService)
 
 	mux := chi.NewRouter()
+
+	mux.Use(customLogMiddleware)
 
 	// Serve swagger-ui static files
 	mux.Handle(MakeSwaggerStaticServe(SWAGGER_ROOT))

@@ -9,7 +9,7 @@ import (
 // Wrapper around the standard lib logger; log
 //
 
-const flags = log.LstdFlags | log.Lshortfile
+const flags = log.LstdFlags
 
 type StandardLogger struct {
 	DebugLogger *log.Logger

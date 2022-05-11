@@ -62,7 +62,7 @@ create-settings-private:
   endif
 
 lint:
-	./git-hooks/pre-push.sh 
+	./bash_scripts/go-fmt-msg.sh
 	forbidigo -set_exit_status ./...
 	staticcheck ./...
 
