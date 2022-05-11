@@ -62,6 +62,12 @@ lint:
 	forbidigo -set_exit_status ./...
 	staticcheck ./...
 
+docker.build-dev:
+	lima nerdctl build -t buildimage -f Dockerfile.dev .
+
+docker.run-dev:
+	lima nerdctl run --rm -it --name devtest --mount type=bind,source="$(shell pwd)",target=/go/src -p 8080:8080 buildimage
+
 # 
 # Check are dependencies installed
 # 
