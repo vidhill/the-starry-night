@@ -47,6 +47,8 @@ The default values are loaded from `settings.yaml` and can be overridden by envi
 
 To check if you have the required dependencies installed run `make check.dependencies`
 
+To set up git hooks run `make setup-git-hooks`
+
 # Tests
 
 - To run unit tests run `make test`
