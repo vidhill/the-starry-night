@@ -23,7 +23,6 @@ integration-test:
 setup-git-hooks:
 	cp git-hooks/pre-push.sh .git/hooks/pre-push
 
-
 swagger.scan: check.swagger swagger.download-ui
 	swagger generate spec -o $(SWAGGER_UI_FOLDER)/swagger.yaml --scan-models
 
