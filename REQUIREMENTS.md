@@ -43,8 +43,8 @@
 - [ ] serve over https
 - [ ] Add dev `Dockerfile`
 - [ ] Add build `Dockerfile`
-- [*] static code analysis (`go vet`/`staticcheck`)
-- [*] serve swagger-ui
+- [x] static code analysis (`go vet`/`staticcheck`)
+- [x] serve swagger-ui
 - [ ] Circle-ci build
 - [x] Code coverage report (codecov perhaps)
 - [ ] Add minimum code coverage to pre-push hook
