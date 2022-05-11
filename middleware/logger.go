@@ -19,8 +19,15 @@ func (m LogMiddleware) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	ww := middleware.NewWrapResponseWriter(w, req.ProtoMajor)
 
 	defer func() {
-		s := fmt.Sprintf(`served %s request "%s" returned %v response`, req.Method, req.URL.Path, ww.Status())
-		m.logger.Info(s)
+		respStatus := ww.Status()
+		s := fmt.Sprintf(`served %s request "%s" returned %v response`, req.Method, req.URL.Path, respStatus)
+
+		if respStatus == http.StatusInternalServerError {
+			m.logger.Error(s)
+		} else {
+			m.logger.Info(s)
+		}
+
 	}()
 
 	m.next.ServeHTTP(ww, req)
