@@ -33,10 +33,20 @@ to create the file run `make create-settings-private`
 
 # Prerequisites
 
-- `go` version `1.17`+
-- `go-swagger` [installation](https://goswagger.io/install.html)
-- Recommended
-  - For live-reload during development `air` to install run: `go install github.com/cosmtrek/air@latest`
+|                  |                                                               |
+| ---------------- | ------------------------------------------------------------- |
+| go (min `v1.17`) |                                                               |
+| go-swagger       | [installation](https://goswagger.io/install.html)             |
+| forbidigo        | run: `go install github.com/ashanbrown/forbidigo@v1.3.0`      |
+| staticcheck      | run: `go install honnef.co/go/tools/cmd/staticcheck@2022.1.1` |
+| air              | run: `go install github.com/cosmtrek/air@latest`              |
+
+To check if you have the required dependencies installed run `make check.dependencies`
+
+# Tests
+
+- To run unit tests run `make test`
+- To run integration tests run `make integration-test` (ensure the app is running before running integration tests)
 
 # API documentation
 
