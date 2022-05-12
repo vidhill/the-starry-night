@@ -105,6 +105,10 @@ func NewISSVisibleService(config ConfigService, logger LoggerService, iss ISSLoc
 
 func CheckISSVisible(position, ISSPosition model.Coordinates, weatherResult domain.WeatherResult, cloudCoverThreshold int, precision uint) bool {
 
+	if !utils.DetermineIsNight(weatherResult.ObserverationTime, weatherResult.Sunrise, weatherResult.Sunset) {
+		return false
+	}
+
 	if weatherResult.CloudCover >= cloudCoverThreshold {
 		return false
 	}
