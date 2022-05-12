@@ -122,9 +122,12 @@ func MakeCoordinatesMatch(precision uint) func(model.Coordinates, model.Coordina
 	positionsMatch := MakePositionMatch(precision)
 
 	return func(a, b model.Coordinates) bool {
+		// just first check latitude first
+		// if they don't match then must not match
 		if !positionsMatch(a.Latitude, b.Latitude) {
 			return false
 		}
+		// latitudes match, so now check longitude
 		return positionsMatch(a.Longitude, b.Longitude)
 	}
 }
