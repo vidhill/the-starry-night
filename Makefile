@@ -66,7 +66,7 @@ lint:
 # Check are dependencies installed
 # 
 
-check.dependencies: check.swagger check.forbidigo check.staticcheck check.air
+check.dependencies: check.swagger check.golangci-lint check.forbidigo check.staticcheck check.air
 
 check.swagger:
    ifeq (, $(shell which swagger))
@@ -86,4 +86,9 @@ check.staticcheck:
 check.air:
    ifeq (, $(shell which air))
 		$(error air is not installed, Please install run "go install github.com/cosmtrek/air@v1.27.10")
+   endif
+
+check.golangci-lint:
+   ifeq (, $(shell which golangci-lint))
+		$(error golangci-lint is not installed, Please install see https://golangci-lint.run/usage/install/#local-installation)
    endif
