@@ -59,7 +59,7 @@ create-settings-private:
 
 lint:
 	./bash_scripts/go-fmt-msg.sh
-	forbidigo -set_exit_status ./...
+	golangci-lint run
 	staticcheck ./...
 
 # 
