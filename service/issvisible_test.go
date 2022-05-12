@@ -10,6 +10,9 @@ import (
 	"github.com/vidhill/the-starry-night/service"
 )
 
+// using the same threshold for unit tests
+const testCloudCoverThreshold = 30
+
 // exact position match scenarios
 //
 func Test_CheckISSVisible(t *testing.T) {
@@ -21,7 +24,7 @@ func Test_CheckISSVisible(t *testing.T) {
 
 	w := makeMockClearNightResult()
 
-	res := service.CheckISSVisible(loc, loc, w, 30, 100)
+	res := service.CheckISSVisible(loc, loc, w, testCloudCoverThreshold, 100)
 
 	assert.True(t, res)
 }
@@ -35,7 +38,7 @@ func Test_CheckISSVisible_daytime(t *testing.T) {
 
 	w := makeMockClearDayResult()
 
-	res := service.CheckISSVisible(loc, loc, w, 30, 100)
+	res := service.CheckISSVisible(loc, loc, w, testCloudCoverThreshold, 100)
 
 	assert.False(t, res)
 }
@@ -49,7 +52,7 @@ func Test_CheckISSVisible_clear_night(t *testing.T) {
 
 	w := makeMockClearNightResult()
 
-	res := service.CheckISSVisible(loc, loc, w, 30, 100)
+	res := service.CheckISSVisible(loc, loc, w, testCloudCoverThreshold, 100)
 
 	assert.True(t, res)
 }
@@ -69,7 +72,7 @@ func Test_CheckISSVisible_clear_night_not_overhead(t *testing.T) {
 
 	w := makeMockClearNightResult()
 
-	res := service.CheckISSVisible(loc, ISSloc, w, 30, 100)
+	res := service.CheckISSVisible(loc, ISSloc, w, testCloudCoverThreshold, 100)
 
 	assert.False(t, res)
 }
@@ -89,7 +92,7 @@ func Test_CheckISSVisible_clear_night_not_exactly(t *testing.T) {
 
 	w := makeMockClearNightResult()
 
-	res := service.CheckISSVisible(loc, ISSloc, w, 30, 2)
+	res := service.CheckISSVisible(loc, ISSloc, w, testCloudCoverThreshold, 2)
 
 	assert.True(t, res)
 }
@@ -103,7 +106,7 @@ func Test_CheckISSVisible_overcast_night(t *testing.T) {
 
 	w := makeMockOvercastNightResult()
 
-	res := service.CheckISSVisible(loc, loc, w, 30, 100)
+	res := service.CheckISSVisible(loc, loc, w, testCloudCoverThreshold, 100)
 
 	assert.False(t, res)
 }
