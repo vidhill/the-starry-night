@@ -109,7 +109,6 @@ func Test_CheckISSVisible_overcast_night(t *testing.T) {
 }
 
 func makeMockClearNightResult() domain.WeatherResult {
-
 	return domain.WeatherResult{
 		CloudCover:        10,
 		ObserverationTime: timeFromString("02 Jan 06 06:04 MST"),
@@ -119,7 +118,6 @@ func makeMockClearNightResult() domain.WeatherResult {
 }
 
 func makeMockOvercastNightResult() domain.WeatherResult {
-
 	return domain.WeatherResult{
 		CloudCover:        100,
 		ObserverationTime: timeFromString("02 Jan 06 06:04 MST"),
