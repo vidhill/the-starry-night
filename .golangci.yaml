@@ -38,6 +38,7 @@ linters:
   enable:
     - forbidigo
     - gofmt
+    - nolintlint
 
 
 # issues:
