@@ -77,7 +77,7 @@ func assertStatusCode(t *testing.T, expected int, response *http.Response) {
 }
 
 func setBaseUrl(defaultBaseUrl string) string {
-	host := os.Getenv("INTEGRATION_TEST_HOSTNAME") //nolint:forbidigo
+	host := os.Getenv("INTEGRATION_TEST_HOSTNAME") //nolint:forbidigo // this is why
 	if host == "" {
 		return defaultBaseUrl
 	}

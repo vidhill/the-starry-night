@@ -26,6 +26,9 @@ linters-settings:
   #   go: "1.15"
   #   # https://staticcheck.io/docs/options#checks
   #   checks: [ "all" ]
+  nolintlint:
+    require-explanation: true
+    require-specific: true
 
 linters:
   # Disable all linters.
