@@ -26,6 +26,9 @@ jobs:
           paths:
             - "/go/pkg/mod"
       - run:
+          name: Install build dependencies
+          command: go install github.com/ashanbrown/forbidigo@v1.3.0
+      - run:
           name: Lint
           command: make lint
       - run:
