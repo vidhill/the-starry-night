@@ -9,7 +9,7 @@ import (
 	"github.com/vidhill/the-starry-night/model"
 )
 
-func Test_(t *testing.T) {
+func Test_GetCurrent(t *testing.T) {
 
 	logger := domain.NewStandardLogger()
 
