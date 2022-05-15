@@ -18,7 +18,7 @@ dev:
 test:
 	go test $(shell go list ./... | grep -v /integration) -coverprofile .testCoverage.txt
 
-integration-test:
+test.integration:
 	go test $(shell go list ./... | grep /integration)
 
 setup-git-hooks:

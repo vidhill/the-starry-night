@@ -52,7 +52,7 @@ To set up git hooks run `make setup-git-hooks`
 # Tests
 
 - To run unit tests run `make test`
-- To run integration tests run `make integration-test` (ensure the app is running before running integration tests)
+- To run integration tests run `make test.integration` (ensure the app is running before running integration tests)
 
 # API documentation
 
