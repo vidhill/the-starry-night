@@ -20,7 +20,12 @@ dev:
 	air
 
 test:
-	go test $(shell go list ./... | grep -v /integration) -coverprofile .testCoverage.txt
+   ifneq (, $(shell richgo version))
+		richgo test $(UNIT_TESTS) -coverprofile $(UNIT_TEST_OUTPUT_FILE)
+   else
+		go test $(UNIT_TESTS) -coverprofile $(UNIT_TEST_OUTPUT_FILE)
+   endif
+	
 
 test.integration:
 	go test $(shell go list ./... | grep /integration)
