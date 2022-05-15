@@ -3,6 +3,10 @@ SETTINGS_PRIVATE=settings_private.yaml
 SWAGGER_UI_FOLDER=swagger-ui
 SHELL := /bin/bash # mac quirk, net to declare which shell to use
 
+UNIT_TESTS=$(shell go list ./... | grep -v /integration)
+UNIT_TEST_ARGS=test $(UNIT_TESTS) -coverprofile .testCoverage.txt
+UNIT_TEST_OUTPUT_FILE=.testCoverage.txt
+
 default: pre-build swagger.download-ui swagger.scan
 	go build $(ROOT_PATH)
 
