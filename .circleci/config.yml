@@ -39,7 +39,7 @@ jobs:
           name: Run tests
           command: |
             mkdir -p /tmp/test-reports
-            gotestsum --packages="$(go list ./... | grep -v /integration)" --junitfile
+            gotestsum --packages="$(go list ./... | grep -v /integration)" --junitfile /tmp/test-reports/unit-tests.xml
       - store_test_results:
           path: /tmp/test-reports
 
