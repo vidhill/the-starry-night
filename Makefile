@@ -26,6 +26,8 @@ test:
 		go test $(UNIT_TESTS) -coverprofile $(UNIT_TEST_OUTPUT_FILE)
    endif
 	
+test.html-report: test
+	go tool cover -html=$(UNIT_TEST_OUTPUT_FILE)
 
 test.integration:
 	go test $(shell go list ./... | grep /integration)
