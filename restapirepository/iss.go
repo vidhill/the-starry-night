@@ -3,6 +3,7 @@ package restapirepository
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/vidhill/the-starry-night/domain"
@@ -41,7 +42,7 @@ func (s ISSLocationRepositoryRest) GetCurrentLocation() (model.Coordinates, erro
 	}
 
 	if response.StatusCode != http.StatusOK {
-		errMessage := "non success response code received from api"
+		errMessage := fmt.Sprintf("non success response code received from api, received %v", response.StatusCode)
 		logger.Error(errMessage)
 		return emptyResult, errors.New(errMessage)
 	}

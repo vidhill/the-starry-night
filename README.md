@@ -42,13 +42,14 @@ The default values are loaded from `settings.yaml` and can be overridden by envi
 
 # Prerequisites
 
-| Dependency       | Installation                                                  |
-| ---------------- | ------------------------------------------------------------- |
-| go (min `v1.17`) |                                                               |
-| go-swagger       | [installation](https://goswagger.io/install.html)             |
-| forbidigo        | run: `go install github.com/ashanbrown/forbidigo@v1.3.0`      |
-| staticcheck      | run: `go install honnef.co/go/tools/cmd/staticcheck@2022.1.1` |
-| air              | run: `go install github.com/cosmtrek/air@latest`              |
+| Dependency       | Installation                                                  | Optional |
+| ---------------- | ------------------------------------------------------------- | -------- |
+| go (min `v1.17`) |                                                               |          |
+| go-swagger       | [installation](https://goswagger.io/install.html)             |          |
+| forbidigo        | run: `go install github.com/ashanbrown/forbidigo@v1.3.0`      |          |
+| staticcheck      | run: `go install honnef.co/go/tools/cmd/staticcheck@2022.1.1` |          |
+| air              | run: `go install github.com/cosmtrek/air@latest`              | \*       |
+| richgo           | run: `go install github.com/kyoh86/richgo@v0.3.10`            | \*       |
 
 To check if you have the required dependencies installed run `make check.dependencies`
 
@@ -57,7 +58,7 @@ To set up git hooks run `make setup-git-hooks`
 # Tests
 
 - To run unit tests run `make test`
-- To run integration tests run `make integration-test` (ensure the app is running before running integration tests)
+- To run integration tests run `make test.integration` (ensure the app is running before running integration tests)
 
 # API documentation
 

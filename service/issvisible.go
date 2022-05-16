@@ -105,6 +105,11 @@ func NewISSVisibleService(config ConfigService, logger LoggerService, iss ISSLoc
 
 func CheckISSVisible(position, ISSPosition model.Coordinates, weatherResult domain.WeatherResult, cloudCoverThreshold int, precision uint) bool {
 
+	// if it's not night will not be visible
+	if !utils.DetermineIsNight(weatherResult.ObserverationTime, weatherResult.Sunrise, weatherResult.Sunset) {
+		return false
+	}
+
 	if weatherResult.CloudCover >= cloudCoverThreshold {
 		return false
 	}
@@ -118,9 +123,12 @@ func MakeCoordinatesMatch(precision uint) func(model.Coordinates, model.Coordina
 	positionsMatch := MakePositionMatch(precision)
 
 	return func(a, b model.Coordinates) bool {
+		// just first check latitude first
+		// if they don't match then must not match
 		if !positionsMatch(a.Latitude, b.Latitude) {
 			return false
 		}
+		// latitudes match, so now check longitude
 		return positionsMatch(a.Longitude, b.Longitude)
 	}
 }
