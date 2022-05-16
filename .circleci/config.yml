@@ -29,11 +29,11 @@ jobs:
             - "/go/pkg/mod"
       #  will probably replace these with golangci-lint
       - run:
-          name: Install forbidigo
-          command: go install github.com/ashanbrown/forbidigo@v1.3.0
-      - run:
-          name: Install staticcheck
-          command: go install honnef.co/go/tools/cmd/staticcheck@2022.1.1
+          name: Install build dependencies
+          command: |
+            go install github.com/ashanbrown/forbidigo@v1.3.0
+            go install honnef.co/go/tools/cmd/staticcheck@2022.1.1
+            go install github.com/kyoh86/richgo/@v0.3.10
       - run:
           name: Lint
           command: make lint
