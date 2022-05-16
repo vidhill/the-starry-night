@@ -40,10 +40,10 @@ jobs:
       - run:
           name: Run tests
           command: |
-            mkdir -p ${JUNIT_FILE_LOCATION}
+            mkdir -p /tmp/test-reports
             make test.ci
       - store_test_results:
-          path: ${JUNIT_FILE_LOCATION}/unit-tests.xml
+          path: /tmp/test-reports/unit-tests.xml
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
