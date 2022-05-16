@@ -126,14 +126,6 @@ func parseMockJson(s string) (ApiResponse, error) {
 	return response, err
 }
 
-func createMocks() (MockConfig, MockHttp) {
-	mockConfig := MockConfig{}
-
-	mockHttp := MockHttp{}
-
-	return mockConfig, mockHttp
-}
-
 func createStubs() (stubrepository.StubConfig, stubrepository.StubLogger, stubrepository.StubHttp) {
 	stubConfig := stubrepository.NewStubConfig()
 	stubLogger := stubrepository.NewStubLogger()
