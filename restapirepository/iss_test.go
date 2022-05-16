@@ -2,37 +2,91 @@ package restapirepository
 
 import (
 	"encoding/json"
+	"io"
+	"io/ioutil"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"github.com/vidhill/the-starry-night/stubrepository"
 )
 
-type MockConfig struct{}
-type MockLogger struct{}
-type MockHttp struct{}
-
-func (c MockConfig) GetBool(s string) bool     { return false }
-func (c MockConfig) GetString(s string) string { return "" }
-func (c MockConfig) GetInt(s string) int       { return 0 }
-
-func (h MockHttp) Get(url string) (*http.Response, error) {
-	return &http.Response{}, nil
+type MockConfig struct {
+	mock.Mock
 }
 
-func (l MockLogger) Debug(v ...interface{}) {}
-func (l MockLogger) Info(v ...interface{})  {}
-func (l MockLogger) Warn(v ...interface{})  {}
-func (l MockLogger) Error(v ...interface{}) {}
+type MockHttp struct {
+	mock.Mock
+}
+
+func (mock *MockConfig) GetBool(s string) bool {
+	args := mock.Called(s)
+	return args.Bool(0)
+}
+func (mock *MockConfig) GetString(s string) string {
+	args := mock.Called(s)
+	return args.String(0)
+}
+func (mock *MockConfig) GetInt(s string) int {
+	args := mock.Called(s)
+	return args.Int(0)
+}
+
+func (mock *MockHttp) Get(url string) (*http.Response, error) {
+	args := mock.Called(url)
+	result := args.Get(0)
+	err := args.Error(1)
+
+	return result.(*http.Response), err
+}
+
+// happy path
+func Test_GetCurrentLocation(t *testing.T) {
+
+	mockHttp := MockHttp{}
+	config, logger, _ := createStubs()
+
+	mockJSON := `
+	{
+		"message": "success",
+		"iss_position": {
+			"latitude": "19.2243",
+			"longitude": "-32.4257"
+		},
+		"timestamp": 1652732569
+	}	
+	`
+
+	mockResponse := http.Response{
+		StatusCode: http.StatusOK,
+		Body:       makeMockReadCloser(mockJSON),
+	}
+
+	mockHttp.On("Get", mock.AnythingOfType("string")).Return(&mockResponse, nil)
+
+	instance := NewISSRepositoryRest(&config, &mockHttp, &logger)
+
+	res, err := instance.GetCurrentLocation()
+
+	mockHttp.AssertExpectations(t)
+
+	assert.Nil(t, err)
+
+	assert.Equal(t, float64(19.2243), res.Latitude)
+	assert.Equal(t, float64(-32.4257), res.Longitude)
+
+}
 
 func Test_SummarizeResponse(t *testing.T) {
-	configService := MockConfig{}
-	loggerService := MockLogger{}
-	httpService := MockHttp{}
+	config := stubrepository.NewStubConfig()
+	logger := stubrepository.NewStubLogger()
+	http := MockHttp{}
 
 	assert := assert.New(t)
 
-	instance := NewISSRepositoryRest(configService, httpService, loggerService)
+	instance := NewISSRepositoryRest(&config, &http, &logger)
 
 	mockJson := `
 	{
@@ -69,9 +123,25 @@ func parseMockJson(s string) (ApiResponse, error) {
 
 	err := json.Unmarshal([]byte(s), &response)
 
-	// if err := json.Unmarshal([]byte(s), &response); err != nil {
-	// 	assert.FailNow(t, "invalid mock JSON string passed to test")
-	// 	return response
-	// }
 	return response, err
+}
+
+func createMocks() (MockConfig, MockHttp) {
+	mockConfig := MockConfig{}
+
+	mockHttp := MockHttp{}
+
+	return mockConfig, mockHttp
+}
+
+func createStubs() (stubrepository.StubConfig, stubrepository.StubLogger, stubrepository.StubHttp) {
+	stubConfig := stubrepository.NewStubConfig()
+	stubLogger := stubrepository.NewStubLogger()
+	stubHttp := stubrepository.NewStubHttp()
+
+	return stubConfig, stubLogger, stubHttp
+}
+
+func makeMockReadCloser(s string) io.ReadCloser {
+	return ioutil.NopCloser(strings.NewReader(s))
 }
