@@ -12,7 +12,7 @@ jobs:
     docker:
       - image: cimg/go:1.17
     environment:
-      JUNIT_FILE_LOCATION: /tmp/test-reports/unit-tests.xml
+      JUNIT_FILE_LOCATION: /tmp/test-reports
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
@@ -43,7 +43,7 @@ jobs:
             mkdir -p ${JUNIT_FILE_LOCATION}
             make test.ci
       - store_test_results:
-          path: ${JUNIT_FILE_LOCATION}
+          path: ${JUNIT_FILE_LOCATION}/unit-tests.xml
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
