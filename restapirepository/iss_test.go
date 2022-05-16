@@ -10,42 +10,14 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/vidhill/the-starry-night/mocks"
 	"github.com/vidhill/the-starry-night/stubrepository"
 )
-
-type MockConfig struct {
-	mock.Mock
-}
-
-type MockHttp struct {
-	mock.Mock
-}
-
-func (mock *MockConfig) GetBool(s string) bool {
-	args := mock.Called(s)
-	return args.Bool(0)
-}
-func (mock *MockConfig) GetString(s string) string {
-	args := mock.Called(s)
-	return args.String(0)
-}
-func (mock *MockConfig) GetInt(s string) int {
-	args := mock.Called(s)
-	return args.Int(0)
-}
-
-func (mock *MockHttp) Get(url string) (*http.Response, error) {
-	args := mock.Called(url)
-	result := args.Get(0)
-	err := args.Error(1)
-
-	return result.(*http.Response), err
-}
 
 // happy path
 func Test_GetCurrentLocation(t *testing.T) {
 
-	mockHttp := MockHttp{}
+	mockHttp := mocks.NewMockHTTP()
 	config, logger, _ := createStubs()
 
 	mockJSON := `
@@ -82,7 +54,7 @@ func Test_GetCurrentLocation(t *testing.T) {
 func Test_SummarizeResponse(t *testing.T) {
 	config := stubrepository.NewStubConfig()
 	logger := stubrepository.NewStubLogger()
-	http := MockHttp{}
+	http := mocks.NewMockHTTP()
 
 	assert := assert.New(t)
 
