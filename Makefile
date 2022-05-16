@@ -20,7 +20,7 @@ test:
 	go test $(shell go list ./... | grep -v /integration) -coverprofile .testCoverage.txt
 
 test.ci:
-	gotestsum --packages="$(go list ./... | grep -v /integration)" --junitfile $(JUNIT_FILE_LOCATION)
+	gotestsum --packages="$(shell go list ./... | grep -v /integration)" --junitfile $(JUNIT_FILE_LOCATION)
 
 integration-test:
 	go test $(shell go list ./... | grep /integration)
