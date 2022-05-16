@@ -2,6 +2,8 @@ ROOT_PATH=cmd/webapp/main.go
 SETTINGS_PRIVATE=settings_private.yaml
 SWAGGER_UI_FOLDER=swagger-ui
 
+SHELL := /bin/bash # mac quirk, net to declare which shell to use
+
 default: pre-build swagger.download-ui swagger.scan
 	go build $(ROOT_PATH)
 
@@ -16,6 +18,9 @@ dev:
 
 test:
 	go test $(shell go list ./... | grep -v /integration) -coverprofile .testCoverage.txt
+
+test.ci:
+	gotestsum --packages="$(go list ./... | grep -v /integration)" --junitfile $(JUNIT_FILE_LOCATION)
 
 integration-test:
 	go test $(shell go list ./... | grep /integration)
