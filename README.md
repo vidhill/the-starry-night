@@ -10,11 +10,11 @@ sequenceDiagram
     participant ISS as ISS Now
     C->>A: /iss-position
     par App to Weather API
-        A->>W: get weather
-        W-->>A: weather
+        A->>+W: get weather
+        W-->>-A: weather
     and App to ISS API
-        A->>ISS: get ISS location
-        ISS-->>A: ISS location
+        A->>+ISS: get ISS location
+        ISS-->>-A: ISS location
     end
     A-->>C: response
 ```
