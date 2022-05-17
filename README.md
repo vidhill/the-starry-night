@@ -2,25 +2,6 @@
 
 REST api written in golang that indicates whether the ISS is visible overhead
 
-```mermaid
-sequenceDiagram
-    participant C as Client
-    participant A as App
-    participant W as WeatherBit
-    link W: https://www.weatherbit.io/api
-    participant ISS as ISS Now
-    link ISS: http://api.open-notify.org/iss-now.json
-    C->>A: /iss-position
-    par A to W
-        A->>W: get weather
-        W-->>A: weather
-    and A to ISS
-        A->>ISS: get ISS location
-        ISS-->>A: ISS location
-    end
-    A-->>C: response
-```
-
 ### Build
 
 1. To build executable run `make` from the root directory
