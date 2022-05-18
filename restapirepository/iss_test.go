@@ -10,6 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	customErrors "github.com/vidhill/the-starry-night/customerrors"
 	"github.com/vidhill/the-starry-night/mocks"
 	"github.com/vidhill/the-starry-night/stubrepository"
 )
@@ -47,6 +48,30 @@ func Test_GetCurrentLocation_happy_path(t *testing.T) {
 
 	assert.Equal(t, float64(19.2243), res.Latitude)
 	assert.Equal(t, float64(-32.4257), res.Longitude)
+
+}
+
+func Test_GetCurrentLocation_bad_request(t *testing.T) {
+
+	mockHttp := mocks.NewMockHTTP()
+	config, logger, _ := createStubs()
+
+	mockResponse := http.Response{
+		StatusCode: http.StatusBadRequest,
+	}
+
+	mockHttp.On("Get", mock.AnythingOfType("string")).Return(&mockResponse, nil)
+
+	instance := NewISSRepositoryRest(&config, &mockHttp, &logger)
+
+	_, err := instance.GetCurrentLocation()
+
+	mockHttp.AssertExpectations(t)
+
+	assert.NotNil(t, err)
+
+	unexpectedResponseError := customErrors.UnexpectedResponseError{}
+	assert.ErrorAs(t, err, &unexpectedResponseError)
 
 }
 
