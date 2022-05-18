@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	customErrors "github.com/vidhill/the-starry-night/customerrors"
 	"github.com/vidhill/the-starry-night/domain"
 	"github.com/vidhill/the-starry-night/model"
 	"github.com/vidhill/the-starry-night/utils"
@@ -44,7 +45,7 @@ func (s ISSLocationRepositoryRest) GetCurrentLocation() (model.Coordinates, erro
 	if response.StatusCode != http.StatusOK {
 		errMessage := fmt.Sprintf("non success response code received from api, received %v", response.StatusCode)
 		logger.Error(errMessage)
-		return emptyResult, errors.New(errMessage)
+		return emptyResult, customErrors.NewUnexpectedResponseError(response.StatusCode)
 	}
 
 	result := ApiResponse{}
@@ -98,4 +99,24 @@ func (s ISSLocationRepositoryRest) SummarizeResponse(a ApiResponse) (model.Coord
 	}
 
 	return coordinates, nil
+}
+
+type UnMarshalError struct {
+	msg string
+	mid error
+}
+
+func (e UnMarshalError) Error() string {
+	return fmt.Sprintf("%s, %v", e.msg, e.mid)
+}
+
+func (e UnMarshalError) Unwrap() error {
+	return e.mid
+}
+
+func NewUnMarshalError(msg string, err error) UnMarshalError {
+	return UnMarshalError{
+		msg: msg,
+		mid: err,
+	}
 }
