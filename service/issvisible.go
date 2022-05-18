@@ -82,11 +82,11 @@ func (h ISSVisibleService) CallAPIsParallel(coordinates model.Coordinates) (mode
 
 		/// todo tidy, use error folding ?
 		if issErr != nil {
-			return ISSlocation, weatherResult, fmt.Errorf("failed to get iss location %w", issErr)
+			return ISSlocation, weatherResult, fmt.Errorf("failed to get iss location, %w", issErr)
 		}
 
 		if weatherErr != nil {
-			return ISSlocation, weatherResult, fmt.Errorf("failed to get weather info %w", weatherErr)
+			return ISSlocation, weatherResult, fmt.Errorf("failed to get weather info, %w", weatherErr)
 		}
 
 	}
