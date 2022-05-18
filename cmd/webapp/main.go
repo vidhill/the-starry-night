@@ -75,11 +75,11 @@ func main() {
 	// 				500: ErrorResponse
 	mux.Get("/iss-position", handlers.ComposeHandlers(handlers.AddJsonHeader)(dh.ISSPosition))
 
-	// start server
 	port := configService.GetString("SERVER_PORT")
 
 	loggerService.Info("listening on port", port)
 
+	// start server
 	err := http.ListenAndServe(":"+port, mux)
 
 	if err != nil {
