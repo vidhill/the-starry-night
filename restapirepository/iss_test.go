@@ -14,8 +14,7 @@ import (
 	"github.com/vidhill/the-starry-night/stubrepository"
 )
 
-// happy path
-func Test_GetCurrentLocation(t *testing.T) {
+func Test_GetCurrentLocation_happy_path(t *testing.T) {
 
 	mockHttp := mocks.NewMockHTTP()
 	config, logger, _ := createStubs()
