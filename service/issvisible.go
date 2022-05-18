@@ -86,7 +86,7 @@ func (h ISSVisibleService) CallAPIsParallel(coordinates model.Coordinates) (mode
 		}
 
 		if weatherErr != nil {
-			return ISSlocation, weatherResult, fmt.Errorf("failed to get weather info %w", issErr)
+			return ISSlocation, weatherResult, fmt.Errorf("failed to get weather info %w", weatherErr)
 		}
 
 	}
