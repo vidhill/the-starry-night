@@ -21,9 +21,9 @@ dev:
 
 test:
    ifneq (, $(shell richgo version))
-		richgo test $(UNIT_TESTS) -coverprofile $(UNIT_TEST_OUTPUT_FILE)
+		richgo test $(UNIT_TESTS) -coverprofile $(UNIT_TEST_OUTPUT_FILE) -covermode=atomic
    else
-		go test $(UNIT_TESTS) -coverprofile $(UNIT_TEST_OUTPUT_FILE)
+		go test $(UNIT_TESTS) -coverprofile $(UNIT_TEST_OUTPUT_FILE) -covermode=atomic
    endif
 	
 test.html-report: test
