@@ -2,13 +2,13 @@ package stubrepository
 
 type StubConfig struct{}
 
-func (mock *StubConfig) GetBool(s string) bool {
+func (mock StubConfig) GetBool(s string) bool {
 	return false
 }
-func (mock *StubConfig) GetString(s string) string {
+func (mock StubConfig) GetString(s string) string {
 	return ""
 }
-func (mock *StubConfig) GetInt(s string) int {
+func (mock StubConfig) GetInt(s string) int {
 	return 0
 }
 
