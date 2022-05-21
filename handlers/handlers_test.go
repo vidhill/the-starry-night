@@ -26,11 +26,12 @@ func (s MockISSService) GetISSVisible(now time.Time, coordinates model.Coordinat
 func Test_ISSPosition_happyPath(t *testing.T) {
 	h := initHandler()
 
-	w, req := makeRequestRecorder("/iss-position?lat=51.89764968941597&long=-8.46828736406348")
+	rr := httptest.NewRecorder()
+	req := makeISSRequest("lat=51.89764968941597&long=-8.46828736406348")
 
-	h.ISSPosition(w, req)
+	h.ISSPosition(rr, req)
 
-	res, data := getRecordedResponse(t, w)
+	res, data := getRecordedResponse(t, rr)
 
 	expected := `
 	{
@@ -46,13 +47,24 @@ func Test_ISSPosition_happyPath(t *testing.T) {
 func Test_ISSPosition_missingQueryParam(t *testing.T) {
 	h := initHandler()
 
-	w, req := makeRequestRecorder("/iss-position?long=-8.46828736406348")
+	testCases := []string{
+		"",                   // all query params missing
+		"long=-8.4",          // lat param missing
+		"lat=-8.4",           // long param missing
+		"lat=91&long=-8.4",   // lat param outside range
+		"lat=51.89&long=190", // long param outside range
+	}
 
-	h.ISSPosition(w, req)
+	for _, queryParam := range testCases {
+		rr := httptest.NewRecorder()
+		req := makeISSRequest(queryParam)
 
-	res := w.Result()
+		h.ISSPosition(rr, req)
 
-	assert.Equal(t, http.StatusBadRequest, res.StatusCode)
+		res := rr.Result()
+
+		assert.Equal(t, http.StatusBadRequest, res.StatusCode)
+	}
 
 }
 
@@ -65,11 +77,9 @@ func initHandler() handlers.Handlers {
 	return handlers.NewHandlers(stubLogger, mockISSService)
 }
 
-func makeRequestRecorder(url string) (*httptest.ResponseRecorder, *http.Request) {
-	req := httptest.NewRequest(http.MethodGet, url, nil)
-	w := httptest.NewRecorder()
-
-	return w, req
+func makeISSRequest(queryParams string) *http.Request {
+	path := "/iss-position?" + queryParams
+	return httptest.NewRequest(http.MethodGet, path, nil)
 }
 
 func getRecordedResponse(t *testing.T, w *httptest.ResponseRecorder) (*http.Response, []byte) {
