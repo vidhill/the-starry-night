@@ -1,30 +1,29 @@
 package handlers_test
 
 import (
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/vidhill/the-starry-night/handlers"
-	"github.com/vidhill/the-starry-night/model"
+	"github.com/vidhill/the-starry-night/mocks"
 	"github.com/vidhill/the-starry-night/service"
 	"github.com/vidhill/the-starry-night/stubrepository"
 )
 
-type MockISSService struct {
-	mock.Mock
-}
+func Test_ISSPosition_happyPath(t *testing.T) { // case service returns a isOverhead response
 
-func (s MockISSService) GetISSVisible(now time.Time, coordinates model.Coordinates) (service.ISSVisibleResult, error) {
-	return service.ISSVisibleResult{}, nil
-}
+	mockResponse := service.ISSVisibleResult{
+		ISSOverhead: true,
+	}
 
-func Test_ISSPosition_happyPath(t *testing.T) {
-	h := initHandler()
+	mockISSVisible := makeMockISSService(mockResponse, nil)
+
+	h := initHandler(mockISSVisible)
 
 	rr := httptest.NewRecorder()
 	req := makeISSRequest("lat=51.89764968941597&long=-8.46828736406348")
@@ -35,17 +34,43 @@ func Test_ISSPosition_happyPath(t *testing.T) {
 
 	expected := `
 	{
-		"iss_overhead": false
+		"iss_overhead": true
 	}
 	`
+
+	mockISSVisible.AssertExpectations(t)
 
 	assert.Equal(t, http.StatusOK, res.StatusCode)
 	assert.JSONEq(t, expected, string(data))
 
 }
 
+func Test_ISSPosition_error(t *testing.T) { // case service returns an error
+
+	mockResponse := service.ISSVisibleResult{}
+	modkErr := errors.New("mock error")
+
+	mockISSVisible := makeMockISSService(mockResponse, modkErr)
+
+	h := initHandler(mockISSVisible)
+
+	rr := httptest.NewRecorder()
+	req := makeISSRequest("lat=51.89764968941597&long=-8.46828736406348")
+
+	h.ISSPosition(rr, req)
+
+	// res, data := getRecordedResponse(t, rr)
+	res, _ := getRecordedResponse(t, rr)
+
+	mockISSVisible.AssertExpectations(t)
+
+	assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
+
+}
+
 func Test_ISSPosition_missingQueryParam(t *testing.T) {
-	h := initHandler()
+	mockISSService := mocks.NewISSVisibleService()
+	h := initHandler(mockISSService)
 
 	testCases := []string{
 		"",                   // all query params missing
@@ -71,9 +96,8 @@ func Test_ISSPosition_missingQueryParam(t *testing.T) {
 // Test utils
 //
 
-func initHandler() handlers.Handlers {
+func initHandler(mockISSService mocks.ISSVisibleService) handlers.Handlers {
 	stubLogger := stubrepository.NewStubLogger()
-	mockISSService := MockISSService{}
 	return handlers.NewHandlers(stubLogger, mockISSService)
 }
 
@@ -94,4 +118,16 @@ func getRecordedResponse(t *testing.T, w *httptest.ResponseRecorder) (*http.Resp
 	}
 
 	return res, data
+}
+
+func makeMockISSService(mockResponse service.ISSVisibleResult, err error) mocks.ISSVisibleService {
+	mockISSVisibleService := mocks.NewISSVisibleService()
+
+	mockISSVisibleService.On(
+		"GetISSVisible",
+		mock.AnythingOfType("time.Time"),
+		mock.AnythingOfType("model.Coordinates"),
+	).Return(mockResponse, err)
+
+	return mockISSVisibleService
 }
