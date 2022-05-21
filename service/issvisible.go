@@ -10,19 +10,23 @@ import (
 	"github.com/vidhill/the-starry-night/utils"
 )
 
+type ISSVisibleService interface {
+	GetISSVisible(now time.Time, coordinates model.Coordinates) (ISSVisibleResult, error)
+}
+
 // swagger:model ISSResult
 type ISSVisibleResult struct {
 	ISSOverhead bool `json:"iss_overhead"`
 }
 
-type ISSVisibleService struct {
+type DefaultISSVisibleService struct {
 	Config      ConfigService
 	Logger      LoggerService
 	ISSLocation ISSLocationService
 	Weather     WeatherService
 }
 
-func (s ISSVisibleService) GetISSVisible(now time.Time, coordinates model.Coordinates) (ISSVisibleResult, error) {
+func (s DefaultISSVisibleService) GetISSVisible(now time.Time, coordinates model.Coordinates) (ISSVisibleResult, error) {
 	ISSlocation, weatherResult, err := s.CallAPIsParallel(coordinates)
 
 	if err != nil {
@@ -44,7 +48,7 @@ func (s ISSVisibleService) GetISSVisible(now time.Time, coordinates model.Coordi
 	return res, nil
 }
 
-func (h ISSVisibleService) CallAPIsParallel(coordinates model.Coordinates) (model.Coordinates, domain.WeatherResult, error) {
+func (h DefaultISSVisibleService) CallAPIsParallel(coordinates model.Coordinates) (model.Coordinates, domain.WeatherResult, error) {
 
 	coordinatesChan := make(chan model.Coordinates, 1)
 	weatherChan := make(chan domain.WeatherResult, 1)
@@ -95,7 +99,7 @@ func (h ISSVisibleService) CallAPIsParallel(coordinates model.Coordinates) (mode
 }
 
 func NewISSVisibleService(config ConfigService, logger LoggerService, iss ISSLocationService, weather WeatherService) ISSVisibleService {
-	return ISSVisibleService{
+	return DefaultISSVisibleService{
 		Config:      config,
 		Logger:      logger,
 		ISSLocation: iss,
