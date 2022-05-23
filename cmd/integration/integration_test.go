@@ -17,7 +17,6 @@ var (
 	re             = regexp.MustCompile("http[s]?://.+")
 )
 
-// SMOKE TEST
 func Test_valid_request(t *testing.T) {
 
 	assert.FailNow(t, "")
