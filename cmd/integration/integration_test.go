@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -71,7 +69,7 @@ func assertStatusCode(t *testing.T, expected int, response *http.Response) {
 }
 
 func setBaseUrl(defaultBaseUrl string) string {
-	host := os.Getenv("INTEGRATION_TEST_HOSTNAME") //nolint:forbidigo // this is why
+	host := os.Getenv("INTEGRATION_TEST_HOSTNAME") //nolint:forbidigo // using getEnv here as do not want to import config just for single value
 	if host == "" {
 		return defaultBaseUrl
 	}
