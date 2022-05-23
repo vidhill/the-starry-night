@@ -21,7 +21,8 @@ integration-test:
 	go test $(shell go list ./... | grep /integration)
 
 setup-git-hooks:
-	cp git-hooks/pre-push.sh .git/hooks/pre-push
+	echo "#!/bin/sh \nmake pre-commit" > .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
 
 swagger.scan: check.swagger swagger.download-ui
 	swagger generate spec -o $(SWAGGER_UI_FOLDER)/swagger.yaml --scan-models
