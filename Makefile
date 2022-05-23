@@ -58,6 +58,8 @@ create-settings-private:
 		$(info Created file: $(SETTINGS_PRIVATE))
   endif
 
+pre-push-hook: lint test
+
 lint:
 	./bash_scripts/go-fmt-msg.sh
 	golangci-lint run
