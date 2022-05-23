@@ -32,12 +32,6 @@ func Test_valid_request(t *testing.T) {
 
 	contentTypeHeaders := response.Header.Values("Content-type")
 
-	fmt.Println()
-	// dumping raw response to stdout
-	io.Copy(os.Stdout, response.Body)
-	fmt.Println()
-	fmt.Println()
-
 	assert.Len(t, contentTypeHeaders, 1)
 	assert.Equal(t, "application/json", contentTypeHeaders[0])
 
