@@ -61,7 +61,6 @@ create-settings-private:
 pre-push-hook: lint test
 
 lint:
-	./bash_scripts/go-fmt-msg.sh
 	golangci-lint run
 	staticcheck ./...
 
