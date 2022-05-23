@@ -39,6 +39,7 @@ linters:
     - forbidigo
     - gofmt
     - nolintlint
+    - staticcheck
 
 
 # issues:
