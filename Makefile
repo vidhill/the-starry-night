@@ -62,7 +62,6 @@ pre-push-hook: lint test
 
 lint:
 	golangci-lint run
-	staticcheck ./...
 
 # 
 # Check are dependencies installed
