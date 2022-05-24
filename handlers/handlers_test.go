@@ -7,12 +7,21 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/jgroeneveld/schema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/vidhill/the-starry-night/handlers"
 	"github.com/vidhill/the-starry-night/mocks"
 	"github.com/vidhill/the-starry-night/service"
 	"github.com/vidhill/the-starry-night/stubrepository"
+	assertUtils "github.com/vidhill/the-starry-night/utils/assert"
+)
+
+var (
+	errorResponseJSONSchema = schema.Map{
+		"message":    schema.IsString,
+		"error_code": schema.IsInteger,
+	}
 )
 
 func Test_ISSPosition_happyPath(t *testing.T) { // case service returns a isOverhead response
@@ -59,10 +68,11 @@ func Test_ISSPosition_error(t *testing.T) { // case service returns an error
 
 	h.ISSPosition(rr, req)
 
-	// res, data := getRecordedResponse(t, rr)
-	res, _ := getRecordedResponse(t, rr)
+	res := rr.Result()
 
 	mockISSVisible.AssertExpectations(t)
+
+	assertUtils.MatchesJSONSchema(t, errorResponseJSONSchema, res.Body)
 
 	assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
 
@@ -87,6 +97,8 @@ func Test_ISSPosition_missingQueryParam(t *testing.T) {
 		h.ISSPosition(rr, req)
 
 		res := rr.Result()
+
+		assertUtils.MatchesJSONSchema(t, errorResponseJSONSchema, res.Body)
 
 		assert.Equal(t, http.StatusBadRequest, res.StatusCode)
 	}
