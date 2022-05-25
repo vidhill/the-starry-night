@@ -48,5 +48,5 @@
 - [x] Circle-ci build
 - [x] Code coverage report (codecov perhaps)
 - [ ] Add minimum code coverage to pre-push hook
-  - [ ] display coverage in friendly (human readable) report
+  - [x] display coverage in friendly (human readable) report
 - [x] middleware to log requests/responses
