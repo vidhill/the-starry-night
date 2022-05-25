@@ -38,8 +38,9 @@ test.integration:
 	go test $(shell go list ./... | grep /integration)
 
 setup-git-hooks:
-	printf '#!/bin/sh \nmake pre-push-hook' > .git/hooks/pre-push
-	chmod +x .git/hooks/pre-push
+	$(info Setting up git hooks)
+	@printf '#!/bin/sh \nmake pre-push-hook' > .git/hooks/pre-push
+	@chmod +x .git/hooks/pre-push
 
 swagger.scan: check.swagger swagger.download-ui
 	swagger generate spec -i swagger-base.yaml -o $(SWAGGER_UI_FOLDER)/swagger.yaml --scan-models
