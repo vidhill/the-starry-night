@@ -71,6 +71,7 @@ To set up git hooks run `make setup-git-hooks`
 # Tests
 
 - To run unit tests run `make test`
+- To view unit test coverage breakdown in html run `make test.html-report`
 - To run integration tests run `make test.integration` (ensure the app is running before running integration tests)
 
 # API documentation
