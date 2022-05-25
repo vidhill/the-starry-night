@@ -7,6 +7,23 @@
 
 REST api written in golang that indicates whether the ISS is visible overhead
 
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant A as App
+    participant W as WeatherBit
+    participant ISS as ISS Now
+    C->>A: /iss-position
+    par App to Weather API
+        A->>+W: get weather
+        W-->>-A: weather
+    and App to ISS API
+        A->>+ISS: get ISS location
+        ISS-->>-A: ISS location
+    end
+    A-->>C: response
+```
+
 ### Build
 
 1. To build executable run `make` from the root directory
