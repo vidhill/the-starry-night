@@ -26,7 +26,8 @@ integration-test:
 	go test $(shell go list ./... | grep /integration)
 
 setup-git-hooks:
-	cp git-hooks/pre-push.sh .git/hooks/pre-push
+	echo "#!/bin/sh \nmake pre-push-hook" > .git/hooks/pre-push
+	chmod +x .git/hooks/pre-push
 
 swagger.scan: check.swagger swagger.download-ui
 	swagger generate spec -o $(SWAGGER_UI_FOLDER)/swagger.yaml --scan-models
@@ -62,33 +63,28 @@ create-settings-private:
 		$(info Created file: $(SETTINGS_PRIVATE))
   endif
 
+pre-push-hook: lint test
+
 lint:
-	./bash_scripts/go-fmt-msg.sh
-	forbidigo -set_exit_status ./...
-	staticcheck ./...
+	golangci-lint run
 
 # 
 # Check are dependencies installed
 # 
 
-check.dependencies: check.swagger check.forbidigo check.staticcheck check.air
+check.dependencies: check.swagger check.golangci-lint check.forbidigo check.staticcheck check.air
 
 check.swagger:
    ifeq (, $(shell which swagger))
 		$(error swagger is not installed, Please install go swagger https://goswagger.io/install.html)
    endif
 
-check.forbidigo:
-   ifeq (, $(shell which forbidigo))
-		$(error forbidigo is not installed, Please install run "go install github.com/ashanbrown/forbidigo@v1.3.0")
-   endif
-
-check.staticcheck:
-   ifeq (, $(shell which staticcheck))
-		$(error staticcheck is not installed, Please install run "go install honnef.co/go/tools/cmd/staticcheck@2022.1.1")
-   endif
-
 check.air:
    ifeq (, $(shell which air))
 		$(error air is not installed, Please install run "go install github.com/cosmtrek/air@v1.27.10")
+   endif
+
+check.golangci-lint:
+   ifeq (, $(shell which golangci-lint))
+		$(error golangci-lint is not installed, Please install see https://golangci-lint.run/usage/install/#local-installation)
    endif

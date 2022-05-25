@@ -42,13 +42,12 @@ The default values are loaded from `settings.yaml` and can be overridden by envi
 
 # Prerequisites
 
-| Dependency       | Installation                                                  |
-| ---------------- | ------------------------------------------------------------- |
-| go (min `v1.17`) |                                                               |
-| go-swagger       | [installation](https://goswagger.io/install.html)             |
-| forbidigo        | run: `go install github.com/ashanbrown/forbidigo@v1.3.0`      |
-| staticcheck      | run: `go install honnef.co/go/tools/cmd/staticcheck@2022.1.1` |
-| air              | run: `go install github.com/cosmtrek/air@latest`              |
+| Dependency       | Installation                                                                |
+| ---------------- | --------------------------------------------------------------------------- |
+| go (min `v1.17`) |                                                                             |
+| go-swagger       | [installation](https://goswagger.io/install.html)                           |
+| golangci-lint    | [installation](https://golangci-lint.run/usage/install/#local-installation) |
+| air              | run: `go install github.com/cosmtrek/air@latest`                            |
 
 To check if you have the required dependencies installed run `make check.dependencies`
 
