@@ -1,9 +1,6 @@
 # the-starry-night
 
-- main  
-  [![CircleCI](https://circleci.com/gh/vidhill/the-starry-night/tree/main.svg?style=svg)](https://circleci.com/gh/vidhill/the-starry-night/tree/main)
-- setup (this) branch  
-  [![CircleCI](https://circleci.com/gh/vidhill/the-starry-night/tree/add-circle-ci.svg?style=svg)](https://circleci.com/gh/vidhill/the-starry-night/tree/add-circle-ci) (delete before merge)
+[![CircleCI](https://circleci.com/gh/vidhill/the-starry-night/tree/main.svg?style=svg)](https://circleci.com/gh/vidhill/the-starry-night/tree/main)
 
 REST api written in golang that indicates whether the ISS is visible overhead
 
@@ -59,12 +56,13 @@ The default values are loaded from `settings.yaml` and can be overridden by envi
 
 # Prerequisites
 
-| Dependency       | Installation                                                                |
-| ---------------- | --------------------------------------------------------------------------- |
-| go (min `v1.17`) |                                                                             |
-| go-swagger       | [installation](https://goswagger.io/install.html)                           |
-| golangci-lint    | [installation](https://golangci-lint.run/usage/install/#local-installation) |
-| air              | run: `go install github.com/cosmtrek/air@latest`                            |
+| Dependency       | Installation                                                                |     |
+| ---------------- | --------------------------------------------------------------------------- | --- |
+| go (min `v1.17`) |                                                                             |     |
+| go-swagger       | [installation](https://goswagger.io/install.html)                           |     |
+| golangci-lint    | [installation](https://golangci-lint.run/usage/install/#local-installation) |     |
+| air              | run: `go install github.com/cosmtrek/air@latest`                            | \*  |
+| richgo           | run: `go install github.com/kyoh86/richgo@v0.3.10`                          | \*  |
 
 To check if you have the required dependencies installed run `make check.dependencies`
 
@@ -73,7 +71,7 @@ To set up git hooks run `make setup-git-hooks`
 # Tests
 
 - To run unit tests run `make test`
-- To run integration tests run `make integration-test` (ensure the app is running before running integration tests)
+- To run integration tests run `make test.integration` (ensure the app is running before running integration tests)
 
 # API documentation
 

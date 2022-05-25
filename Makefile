@@ -1,9 +1,11 @@
 ROOT_PATH=cmd/webapp/main.go
 SETTINGS_PRIVATE=settings_private.yaml
 SWAGGER_UI_FOLDER=swagger-ui
-SHELL := /bin/bash # mac quirk, net to declare which shell to use
+SHELL := /bin/bash # mac quirk, need to declare which shell to use
 
-SHELL := /bin/bash # mac quirk, net to declare which shell to use
+UNIT_TESTS=$(shell go list ./... | grep -v /integration)
+UNIT_TEST_ARGS=test $(UNIT_TESTS) -coverprofile .testCoverage.txt
+UNIT_TEST_OUTPUT_FILE=.testCoverage.txt
 
 default: pre-build swagger.download-ui swagger.scan
 	go build $(ROOT_PATH)
@@ -18,12 +20,19 @@ dev:
 	air
 
 test:
-	go test $(shell go list ./... | grep -v /integration) -coverprofile .testCoverage.txt
+   ifneq (, $(shell richgo version))
+		richgo test $(UNIT_TESTS) -coverprofile $(UNIT_TEST_OUTPUT_FILE) -covermode=atomic
+   else
+		go test $(UNIT_TESTS) -coverprofile $(UNIT_TEST_OUTPUT_FILE) -covermode=atomic
+   endif
+	
+test.html-report: test
+	go tool cover -html=$(UNIT_TEST_OUTPUT_FILE)
 
 test.ci:
 	gotestsum --packages="$(shell go list ./... | grep -v /integration)" --junitfile $(JUNIT_FILE_LOCATION)/gotestsum-report.xml
 
-integration-test:
+test.integration:
 	go test $(shell go list ./... | grep /integration)
 
 setup-git-hooks:

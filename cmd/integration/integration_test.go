@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 
 	"testing"
 
@@ -13,9 +14,9 @@ import (
 var (
 	defaultBaseUrl = "http://localhost:8080"
 	baseUrl        = setBaseUrl(defaultBaseUrl)
+	re             = regexp.MustCompile("http[s]?://.+")
 )
 
-// SMOKE TEST
 func Test_valid_request(t *testing.T) {
 
 	assert.FailNow(t, "")
@@ -73,6 +74,11 @@ func setBaseUrl(defaultBaseUrl string) string {
 	if host == "" {
 		return defaultBaseUrl
 	}
-	// todo should validate using regex
+
+	if !re.MatchString(host) {
+		log.Printf("\n\n\tInvalid base path passed as env variable, value was: \"%s\"\n\n\n", host)
+		os.Exit(1)
+	}
+
 	return host
 }
