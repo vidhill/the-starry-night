@@ -1,6 +1,28 @@
 # the-starry-night
 
+- main  
+  [![CircleCI](https://circleci.com/gh/vidhill/the-starry-night/tree/main.svg?style=svg)](https://circleci.com/gh/vidhill/the-starry-night/tree/main)
+- setup (this) branch  
+  [![CircleCI](https://circleci.com/gh/vidhill/the-starry-night/tree/add-circle-ci.svg?style=svg)](https://circleci.com/gh/vidhill/the-starry-night/tree/add-circle-ci) (delete before merge)
+
 REST api written in golang that indicates whether the ISS is visible overhead
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant A as App
+    participant W as WeatherBit
+    participant ISS as ISS Now
+    C->>A: /iss-position
+    par App to Weather API
+        A->>+W: get weather
+        W-->>-A: weather
+    and App to ISS API
+        A->>+ISS: get ISS location
+        ISS-->>-A: ISS location
+    end
+    A-->>C: response
+```
 
 ### Build
 
@@ -37,14 +59,13 @@ The default values are loaded from `settings.yaml` and can be overridden by envi
 
 # Prerequisites
 
-| Dependency       | Installation                                                  | Optional |
-| ---------------- | ------------------------------------------------------------- | -------- |
-| go (min `v1.17`) |                                                               |          |
-| go-swagger       | [installation](https://goswagger.io/install.html)             |          |
-| forbidigo        | run: `go install github.com/ashanbrown/forbidigo@v1.3.0`      |          |
-| staticcheck      | run: `go install honnef.co/go/tools/cmd/staticcheck@2022.1.1` |          |
-| air              | run: `go install github.com/cosmtrek/air@latest`              | \*       |
-| richgo           | run: `go install github.com/kyoh86/richgo@v0.3.10`            | \*       |
+| Dependency       | Installation                                                                |     |
+| ---------------- | --------------------------------------------------------------------------- | --- |
+| go (min `v1.17`) |                                                                             |     |
+| go-swagger       | [installation](https://goswagger.io/install.html)                           |     |
+| golangci-lint    | [installation](https://golangci-lint.run/usage/install/#local-installation) |     |
+| air              | run: `go install github.com/cosmtrek/air@latest`                            | \*  |
+| richgo           | run: `go install github.com/kyoh86/richgo@v0.3.10`                          | \*  |
 
 To check if you have the required dependencies installed run `make check.dependencies`
 

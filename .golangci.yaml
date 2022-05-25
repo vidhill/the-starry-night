@@ -1,0 +1,31 @@
+
+# All available settings of specific linters.
+linters-settings:
+  forbidigo:
+    # Forbid the following identifiers (list of regexp).
+    forbid:
+      - 'fmt\.Print.*(# Use logger service\.)?'
+      - 'os\.Getenv.*(# Use config service)?'
+    exclude_godoc_examples: false
+
+  nolintlint:
+    require-explanation: true
+    require-specific: true
+
+linters:
+  # Disable all linters.
+  disable-all: true
+  enable:
+    - forbidigo
+    - gofmt
+    - nolintlint
+    - staticcheck
+    - govet
+
+
+# issues:
+#   exclude-rules:
+#     - path: cmd/integration/integration_test.go
+#       text: "`os.Getenv`"
+#       linters:
+#         - forbidigo
