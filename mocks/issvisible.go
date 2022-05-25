@@ -12,7 +12,7 @@ type ISSVisibleService struct {
 	mock.Mock
 }
 
-func (mock ISSVisibleService) GetISSVisible(now time.Time, coordinates model.Coordinates) (service.ISSVisibleResult, error) {
+func (mock *ISSVisibleService) GetISSVisible(now time.Time, coordinates model.Coordinates) (service.ISSVisibleResult, error) {
 	args := mock.Called(now, coordinates)
 	result := args.Get(0)
 	err := args.Error(1)

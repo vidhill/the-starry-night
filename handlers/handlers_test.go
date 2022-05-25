@@ -80,7 +80,7 @@ func Test_ISSPosition_error(t *testing.T) { // case service returns an error
 
 func Test_ISSPosition_missingQueryParam(t *testing.T) {
 	mockISSService := mocks.NewISSVisibleService()
-	h := initHandler(mockISSService)
+	h := initHandler(&mockISSService)
 
 	testCases := []string{
 		"",                   // all query params missing
@@ -108,7 +108,7 @@ func Test_ISSPosition_missingQueryParam(t *testing.T) {
 // Test utils
 //
 
-func initHandler(mockISSService mocks.ISSVisibleService) handlers.Handlers {
+func initHandler(mockISSService *mocks.ISSVisibleService) handlers.Handlers {
 	stubLogger := stubrepository.NewStubLogger()
 	return handlers.NewHandlers(stubLogger, mockISSService)
 }
@@ -132,7 +132,7 @@ func getRecordedResponse(t *testing.T, w *httptest.ResponseRecorder) (*http.Resp
 	return res, data
 }
 
-func makeMockISSService(mockResponse service.ISSVisibleResult, err error) mocks.ISSVisibleService {
+func makeMockISSService(mockResponse service.ISSVisibleResult, err error) *mocks.ISSVisibleService {
 	mockISSVisibleService := mocks.NewISSVisibleService()
 
 	mockISSVisibleService.On(
@@ -141,5 +141,5 @@ func makeMockISSService(mockResponse service.ISSVisibleResult, err error) mocks.
 		mock.AnythingOfType("model.Coordinates"),
 	).Return(mockResponse, err)
 
-	return mockISSVisibleService
+	return &mockISSVisibleService
 }

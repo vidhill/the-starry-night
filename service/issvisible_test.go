@@ -23,7 +23,7 @@ func Test_GetISSVisible_happy_path(t *testing.T) {
 	//
 	mockConfig, mockISS, mockWeather := initMocks()
 
-	setupMockConfigValues(&mockConfig)
+	setupMockConfigValues(mockConfig)
 
 	mockISSPosition := model.Coordinates{
 		Latitude:  0.123456,
@@ -61,7 +61,7 @@ func Test_GetISSVisible_error(t *testing.T) {
 	//
 	mockConfig, mockISS, mockWeather := initMocks()
 
-	setupMockConfigValues(&mockConfig)
+	setupMockConfigValues(mockConfig)
 
 	mockISSPosition := model.Coordinates{}
 	mockISS.On("GetCurrentLocation").Return(mockISSPosition, errors.New("Dummy Error"))
@@ -225,28 +225,28 @@ func makeMockClearDayResult() domain.WeatherResult {
 }
 
 func makeService(
-	mockConfig mocks.Config,
-	mockISS mocks.ISS,
-	mockWeather mocks.Weather,
+	mockConfig *mocks.Config,
+	mockISS *mocks.ISS,
+	mockWeather *mocks.Weather,
 ) service.ISSVisibleService {
 
 	stubLogger := service.NewLoggerService(stubrepository.NewStubLogger(), "INFO")
 
-	configService := service.NewConfigService(&mockConfig)
-	ISSService := service.NewISSLocationService(&mockISS)
-	weatherService := service.NewWeatherService(&mockWeather)
+	configService := service.NewConfigService(mockConfig)
+	ISSService := service.NewISSLocationService(mockISS)
+	weatherService := service.NewWeatherService(mockWeather)
 
 	ISSVisibleService := service.NewISSVisibleService(configService, stubLogger, ISSService, weatherService)
 
 	return ISSVisibleService
 }
 
-func initMocks() (mocks.Config, mocks.ISS, mocks.Weather) {
+func initMocks() (*mocks.Config, *mocks.ISS, *mocks.Weather) {
 	mockConfig := mocks.NewMockConfig()
 	mockISS := mocks.NewMockISSRepository()
 	mockWeather := mocks.NewMockWeatherRepository()
 
-	return mockConfig, mockISS, mockWeather
+	return &mockConfig, &mockISS, &mockWeather
 }
 
 func setupMockConfigValues(mockConfig *mocks.Config) {
