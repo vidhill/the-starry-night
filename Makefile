@@ -7,8 +7,6 @@ UNIT_TESTS=$(shell go list ./... | grep -v /integration)
 UNIT_TEST_ARGS=test $(UNIT_TESTS) -coverprofile .testCoverage.txt
 UNIT_TEST_OUTPUT_FILE=.testCoverage.txt
 
-SHELL := /bin/bash # mac quirk, need to declare which shell to use
-
 default: pre-build swagger.download-ui swagger.scan
 	go build $(ROOT_PATH)
 
