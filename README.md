@@ -1,5 +1,10 @@
 # the-starry-night
 
+- main  
+  [![CircleCI](https://circleci.com/gh/vidhill/the-starry-night/tree/main.svg?style=svg)](https://circleci.com/gh/vidhill/the-starry-night/tree/main)
+- setup (this) branch  
+  [![CircleCI](https://circleci.com/gh/vidhill/the-starry-night/tree/add-circle-ci.svg?style=svg)](https://circleci.com/gh/vidhill/the-starry-night/tree/add-circle-ci) (delete before merge)
+
 REST api written in golang that indicates whether the ISS is visible overhead
 
 ### Build
