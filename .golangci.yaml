@@ -4,28 +4,10 @@ linters-settings:
   forbidigo:
     # Forbid the following identifiers (list of regexp).
     forbid:
-      # Optionally put comments at the end of the regex, surrounded by `(# )?`
-      # Escape any special characters.
-      - 'fmt\.Print.*(# Do not commit print statements\.)?'
-      - 'os\.Getenv.*(# Use config wrapper.)?'
+      - 'fmt\.Print.*(# Use logger service\.)?'
+      - 'os\.Getenv.*(# Use config service)?'
     exclude_godoc_examples: false
-  # gofmt:
-    # Simplify code: gofmt with `-s` option.
-    # Default: true
-    # simplify: false
-  # misspell:
-  #   # Correct spellings using locale preferences for US or UK.
-  #   # Setting locale to US will correct the British spelling of 'colour' to 'color'.
-  #   # Default is to use a neutral variety of English.
-  #   locale: US
-  #   ignore-words:
-  #     - someword
-  # staticcheck:
-  #   # Select the Go version to target.
-  #   # Default: 1.13
-  #   go: "1.15"
-  #   # https://staticcheck.io/docs/options#checks
-  #   checks: [ "all" ]
+
   nolintlint:
     require-explanation: true
     require-specific: true
@@ -33,8 +15,6 @@ linters-settings:
 linters:
   # Disable all linters.
   disable-all: true
-  # Enable specific linter
-  # https://golangci-lint.run/usage/linters/#enabled-by-default-linters
   enable:
     - forbidigo
     - gofmt
