@@ -56,13 +56,13 @@ The default values are loaded from `settings.yaml` and can be overridden by envi
 
 # Prerequisites
 
-| Dependency       | Installation                                                                |     |
-| ---------------- | --------------------------------------------------------------------------- | --- |
-| go (min `v1.17`) |                                                                             |     |
-| go-swagger       | [installation](https://goswagger.io/install.html)                           |     |
-| golangci-lint    | [installation](https://golangci-lint.run/usage/install/#local-installation) |     |
-| air              | run: `go install github.com/cosmtrek/air@latest`                            | \*  |
-| richgo           | run: `go install github.com/kyoh86/richgo@v0.3.10`                          | \*  |
+| Dependency       | Installation                                                                | Optional |
+| ---------------- | --------------------------------------------------------------------------- | -------- |
+| go (min `v1.17`) |                                                                             |          |
+| go-swagger       | [installation](https://goswagger.io/install.html)                           |          |
+| golangci-lint    | [installation](https://golangci-lint.run/usage/install/#local-installation) |          |
+| air              | run: `go install github.com/cosmtrek/air@latest`                            | \*       |
+| richgo           | run: `go install github.com/kyoh86/richgo@v0.3.10`                          | \*       |
 
 To check if you have the required dependencies installed run `make check.dependencies`
 
