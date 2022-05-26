@@ -44,6 +44,12 @@ func Test_valid_request(t *testing.T) {
 	assert.Len(t, contentTypeHeaders, 1)
 	assert.Equal(t, "application/json", contentTypeHeaders[0])
 
+	validResponseSchema := schema.Map{
+		"iss_overhead": schema.IsBool,
+	}
+
+	assertUtils.MatchesJSONSchema(t, validResponseSchema, response.Body)
+
 }
 
 func Test_invalid_request(t *testing.T) {
