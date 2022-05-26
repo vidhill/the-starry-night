@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/vidhill/the-starry-night/domain"
 	"github.com/vidhill/the-starry-night/handlers"
 	"github.com/vidhill/the-starry-night/middleware"
 	"github.com/vidhill/the-starry-night/service"
-	"github.com/vidhill/the-starry-night/stubrepository"
+	stubRepository "github.com/vidhill/the-starry-night/stubrepository"
 )
 
 const SWAGGER_ROOT = "swagger-ui"
@@ -31,10 +32,11 @@ func main() {
 	// httpService := service.NewHttpService(domain.NewDefaultHttpClient(loggerService))
 
 	// ISSRepository := rest_api_repository.NewISSRepositoryRest(configService, httpService, loggerService)
-	ISSRepository := stubrepository.NewISSRepositoryStub(loggerService)
+	ISSRepository := stubRepository.NewISSRepositoryStub(loggerService)
 
 	// weatherRepository := rest_api_repository.NewWeatherbitRepository(configService, httpService, loggerService)
-	weatherRepository := stubrepository.NewStubWeatherRepository(loggerService)
+	weatherResult := makeMockClearNightResult()
+	weatherRepository := stubRepository.NewStubWeatherRepository(loggerService, weatherResult)
 
 	ISSService := service.NewISSLocationService(ISSRepository)
 	weatherService := service.NewWeatherService(weatherRepository)
@@ -113,4 +115,21 @@ func MakeSwaggerStaticServe(root string) (string, http.Handler) {
 	handler := http.StripPrefix(basePath, fs)
 
 	return url, handler
+}
+
+// helpers
+//
+//
+func timeFromString(s string) time.Time {
+	t, _ := time.Parse(time.RFC822, s)
+	return t
+}
+
+func makeMockClearNightResult() domain.WeatherResult {
+	return domain.WeatherResult{
+		CloudCover:        10,
+		ObserverationTime: timeFromString("02 Jan 06 06:04 MST"),
+		Sunrise:           timeFromString("02 Jan 06 08:00 MST"),
+		Sunset:            timeFromString("02 Jan 06 22:00 MST"),
+	}
 }
