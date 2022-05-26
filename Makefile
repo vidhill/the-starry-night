@@ -31,7 +31,7 @@ test.html-report: test
 	go tool cover -html=$(UNIT_TEST_OUTPUT_FILE)
 
 test.ci:
-	gotestsum --packages="$(shell go list ./... | grep -v /integration)" --junitfile $(JUNIT_FILE_LOCATION)/gotestsum-report.xml
+	gotestsum --packages="$(UNIT_TESTS)" --junitfile $(JUNIT_FILE_LOCATION)/gotestsum-report.xml
 
 test.integration:
   ifneq (, $(shell richgo version))
