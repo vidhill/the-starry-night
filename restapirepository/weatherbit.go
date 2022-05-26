@@ -64,7 +64,7 @@ func (s WeatherbitRepository) GetCurrent(location model.Coordinates) (domain.Wea
 		case http.StatusForbidden:
 			return emptyResult, errors.New("api key may be expired")
 		case http.StatusBadRequest:
-			return emptyResult, errors.New("apionvalid request")
+			return emptyResult, errors.New("api invalid request")
 		}
 
 		return emptyResult, fmt.Errorf("non success response from api, %v", response.StatusCode)

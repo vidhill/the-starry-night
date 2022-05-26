@@ -10,19 +10,23 @@ import (
 	"github.com/vidhill/the-starry-night/utils"
 )
 
+type ISSVisibleService interface {
+	GetISSVisible(now time.Time, coordinates model.Coordinates) (ISSVisibleResult, error)
+}
+
 // swagger:model ISSResult
 type ISSVisibleResult struct {
 	ISSOverhead bool `json:"iss_overhead"`
 }
 
-type ISSVisibleService struct {
+type DefaultISSVisibleService struct {
 	Config      ConfigService
 	Logger      LoggerService
 	ISSLocation ISSLocationService
 	Weather     WeatherService
 }
 
-func (s ISSVisibleService) GetISSVisible(now time.Time, coordinates model.Coordinates) (ISSVisibleResult, error) {
+func (s DefaultISSVisibleService) GetISSVisible(now time.Time, coordinates model.Coordinates) (ISSVisibleResult, error) {
 	ISSlocation, weatherResult, err := s.CallAPIsParallel(coordinates)
 
 	if err != nil {
@@ -44,7 +48,7 @@ func (s ISSVisibleService) GetISSVisible(now time.Time, coordinates model.Coordi
 	return res, nil
 }
 
-func (h ISSVisibleService) CallAPIsParallel(coordinates model.Coordinates) (model.Coordinates, domain.WeatherResult, error) {
+func (h DefaultISSVisibleService) CallAPIsParallel(coordinates model.Coordinates) (model.Coordinates, domain.WeatherResult, error) {
 
 	coordinatesChan := make(chan model.Coordinates, 1)
 	weatherChan := make(chan domain.WeatherResult, 1)
@@ -82,11 +86,11 @@ func (h ISSVisibleService) CallAPIsParallel(coordinates model.Coordinates) (mode
 
 		/// todo tidy, use error folding ?
 		if issErr != nil {
-			return ISSlocation, weatherResult, fmt.Errorf("failed to get iss location %w", issErr)
+			return ISSlocation, weatherResult, fmt.Errorf("failed to get iss location, %w", issErr)
 		}
 
 		if weatherErr != nil {
-			return ISSlocation, weatherResult, fmt.Errorf("failed to get weather info %w", issErr)
+			return ISSlocation, weatherResult, fmt.Errorf("failed to get weather info, %w", weatherErr)
 		}
 
 	}
@@ -95,7 +99,7 @@ func (h ISSVisibleService) CallAPIsParallel(coordinates model.Coordinates) (mode
 }
 
 func NewISSVisibleService(config ConfigService, logger LoggerService, iss ISSLocationService, weather WeatherService) ISSVisibleService {
-	return ISSVisibleService{
+	return DefaultISSVisibleService{
 		Config:      config,
 		Logger:      logger,
 		ISSLocation: iss,
@@ -104,6 +108,11 @@ func NewISSVisibleService(config ConfigService, logger LoggerService, iss ISSLoc
 }
 
 func CheckISSVisible(position, ISSPosition model.Coordinates, weatherResult domain.WeatherResult, cloudCoverThreshold int, precision uint) bool {
+
+	// if it's not night will not be visible
+	if !utils.DetermineIsNight(weatherResult.ObserverationTime, weatherResult.Sunrise, weatherResult.Sunset) {
+		return false
+	}
 
 	if weatherResult.CloudCover >= cloudCoverThreshold {
 		return false
@@ -118,9 +127,12 @@ func MakeCoordinatesMatch(precision uint) func(model.Coordinates, model.Coordina
 	positionsMatch := MakePositionMatch(precision)
 
 	return func(a, b model.Coordinates) bool {
+		// just first check latitude first
+		// if they don't match then must not match
 		if !positionsMatch(a.Latitude, b.Latitude) {
 			return false
 		}
+		// latitudes match, so now check longitude
 		return positionsMatch(a.Longitude, b.Longitude)
 	}
 }

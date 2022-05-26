@@ -1,0 +1,12 @@
+# this file gets merged with the definitions that are generated from the source annotations
+info:
+  description: Documentation for ISS overhead service
+  version: 0.0.2
+swagger: "2.0"
+produces:
+- application/json
+schemes:
+- http
+responses:
+  healthResponse:
+    description: indicates that server is running
