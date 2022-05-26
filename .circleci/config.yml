@@ -1,0 +1,46 @@
+version: 2.1
+
+jobs:
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: cimg/go:1.17
+    environment:
+      JUNIT_FILE_LOCATION: /tmp/test-results
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v2-{{ checksum "go.sum" }}
+      - run:
+          name: Install Dependencies
+          command: go mod download
+      - save_cache:
+          key: go-mod-v2-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+      #  will probably replace these with golangci-lint
+      - run:
+          name: Install build dependencies
+          command: |
+            go install github.com/ashanbrown/forbidigo@v1.3.0
+            go install honnef.co/go/tools/cmd/staticcheck@2022.1.1
+            go install github.com/kyoh86/richgo@v0.3.10
+      - run:
+          name: Lint
+          command: make lint
+      - run:
+          name: Run tests
+          command: |
+            mkdir -p /tmp/test-results
+            make test.ci
+      - store_artifacts: # upload test summary for display in Artifacts
+          path: /tmp/test-results
+          destination: raw-test-output
+      - store_test_results:
+          path: /tmp/test-results/
+
+workflows:
+  lint-unit-test:
+    jobs:
+      - build
