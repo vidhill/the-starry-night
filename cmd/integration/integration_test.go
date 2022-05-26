@@ -19,7 +19,6 @@ var (
 
 func Test_valid_request(t *testing.T) {
 
-	assert.FailNow(t, "")
 	response, err := http.Get(baseUrl + "/iss-position?lat=51.89764968941597&long=-8.46828736406348")
 
 	if err != nil {
