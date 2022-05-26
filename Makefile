@@ -30,8 +30,13 @@ test:
 test.html-report: test
 	go tool cover -html=$(UNIT_TEST_OUTPUT_FILE)
 
+test.html-report-save:
+# - save the html coverage report to disk
+	go tool cover -o test-coverage.html -html=$(UNIT_TEST_OUTPUT_FILE)
+
 test.ci:
-	gotestsum --packages="$(UNIT_TESTS)" --junitfile $(JUNIT_FILE_LOCATION)/gotestsum-report.xml
+	gotestsum --packages="$(UNIT_TESTS)" --junitfile $(JUNIT_FILE_LOCATION)/gotestsum-report.xml --  -coverprofile $(UNIT_TEST_OUTPUT_FILE) -covermode=atomic
+	@make test.html-report-save
 
 test.integration:
   ifneq (, $(shell richgo version))
