@@ -4,7 +4,8 @@ SWAGGER_UI_FOLDER=swagger-ui
 SHELL := /bin/bash # mac quirk, need to declare which shell to use
 
 UNIT_TESTS=$(shell go list ./... | grep -v /integration)
-UNIT_TEST_ARGS=test $(UNIT_TESTS) -coverprofile .testCoverage.txt
+INTEGRATION_TESTS=$(shell go list ./... | grep /integration)
+
 UNIT_TEST_OUTPUT_FILE=.testCoverage.txt
 
 default: pre-build swagger.download-ui swagger.scan
@@ -33,7 +34,11 @@ test.ci:
 	gotestsum --packages="$(shell go list ./... | grep -v /integration)" --junitfile $(JUNIT_FILE_LOCATION)/gotestsum-report.xml
 
 test.integration:
-	go test $(shell go list ./... | grep /integration)
+  ifneq (, $(shell richgo version))
+		richgo test $(INTEGRATION_TESTS)
+  else
+		go test $(INTEGRATION_TESTS)
+  endif
 
 setup-git-hooks:
 	$(info Setting up git hooks)
