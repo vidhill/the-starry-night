@@ -8,7 +8,9 @@ import (
 
 	"testing"
 
+	"github.com/jgroeneveld/schema"
 	"github.com/stretchr/testify/assert"
+	assertUtils "github.com/vidhill/the-starry-night/utils/assert"
 )
 
 var (
