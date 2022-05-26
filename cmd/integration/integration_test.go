@@ -12,10 +12,21 @@ import (
 )
 
 var (
+	baseUrl        string
 	defaultBaseUrl = "http://localhost:8080"
-	baseUrl        = setBaseUrl(defaultBaseUrl)
 	re             = regexp.MustCompile("http[s]?://.+")
 )
+
+func TestMain(m *testing.M) {
+	// use base url from env variable if present
+	baseUrl = setBaseUrl(defaultBaseUrl)
+
+	// TODO check port is open before running tests
+
+	// execute tests
+	code := m.Run()
+	os.Exit(code)
+}
 
 func Test_valid_request(t *testing.T) {
 
