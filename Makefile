@@ -32,7 +32,7 @@ test.html-report: test
 
 test.html-report-save:
 # - save the html coverage report to disk
-	go tool cover -o test-coverage.html -html=$(UNIT_TEST_OUTPUT_FILE)
+	go tool cover -o $(JUNIT_FILE_LOCATION)/test-coverage.html -html=$(UNIT_TEST_OUTPUT_FILE)
 
 test.ci:
 	gotestsum --packages="$(UNIT_TESTS)" --junitfile $(JUNIT_FILE_LOCATION)/gotestsum-report.xml --  -coverprofile $(UNIT_TEST_OUTPUT_FILE) -covermode=atomic
