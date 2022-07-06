@@ -2,9 +2,12 @@ package main
 
 import (
 	"log"
+	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"regexp"
+	"time"
 
 	"testing"
 
@@ -23,7 +26,18 @@ func TestMain(m *testing.M) {
 	// use base url from env variable if present
 	baseUrl = setBaseUrl(defaultBaseUrl)
 
-	// TODO check port is open before running tests
+	// convert baseurl string into url.URL
+	host, err := url.Parse(baseUrl)
+
+	if err != nil {
+		log.Printf("\n\n\tUnable to parse baseUrl, value was: \"%s\"\n\n\n", baseUrl)
+		os.Exit(1)
+	}
+
+	if !rawTCPConnect(host.Host) {
+		log.Printf("Integration tests not run because unable to connect to host at: %s\n Is the application running?", host.Host)
+		os.Exit(1)
+	}
 
 	// execute tests
 	code := m.Run()
@@ -99,4 +113,19 @@ func setBaseUrl(defaultBaseUrl string) string {
 	}
 
 	return host
+}
+
+func rawTCPConnect(host string) bool {
+
+	timeout := time.Second
+
+	conn, err := net.DialTimeout("tcp", host, timeout)
+
+	if err != nil {
+		return false
+	}
+
+	defer conn.Close()
+
+	return conn != nil
 }
