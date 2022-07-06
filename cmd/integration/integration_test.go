@@ -2,20 +2,47 @@ package main
 
 import (
 	"log"
+	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"regexp"
+	"time"
 
 	"testing"
 
+	"github.com/jgroeneveld/schema"
 	"github.com/stretchr/testify/assert"
+	assertUtils "github.com/vidhill/the-starry-night/utils/assert"
 )
 
 var (
+	baseUrl        string
 	defaultBaseUrl = "http://localhost:8080"
-	baseUrl        = setBaseUrl(defaultBaseUrl)
 	re             = regexp.MustCompile("http[s]?://.+")
 )
+
+func TestMain(m *testing.M) {
+	// use base url from env variable if present
+	baseUrl = setBaseUrl(defaultBaseUrl)
+
+	// convert baseurl string into url.URL
+	host, err := url.Parse(baseUrl)
+
+	if err != nil {
+		log.Printf("\n\n\tUnable to parse baseUrl, value was: \"%s\"\n\n\n", baseUrl)
+		os.Exit(1)
+	}
+
+	if !rawTCPConnect(host.Host) {
+		log.Printf("Integration tests not run because unable to connect to host at: %s\n Is the application running?", host.Host)
+		os.Exit(1)
+	}
+
+	// execute tests
+	code := m.Run()
+	os.Exit(code)
+}
 
 func Test_valid_request(t *testing.T) {
 
@@ -32,6 +59,12 @@ func Test_valid_request(t *testing.T) {
 
 	assert.Len(t, contentTypeHeaders, 1)
 	assert.Equal(t, "application/json", contentTypeHeaders[0])
+
+	validResponseSchema := schema.Map{
+		"iss_overhead": schema.IsBool,
+	}
+
+	assertUtils.MatchesJSONSchema(t, validResponseSchema, response.Body)
 
 }
 
@@ -80,4 +113,19 @@ func setBaseUrl(defaultBaseUrl string) string {
 	}
 
 	return host
+}
+
+func rawTCPConnect(host string) bool {
+
+	timeout := time.Second
+
+	conn, err := net.DialTimeout("tcp", host, timeout)
+
+	if err != nil {
+		return false
+	}
+
+	defer conn.Close()
+
+	return conn != nil
 }
