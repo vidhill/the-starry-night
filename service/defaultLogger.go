@@ -1,8 +1,10 @@
-package domain
+package service
 
 import (
 	"log"
 	"os"
+
+	"github.com/vidhill/the-starry-night/domain"
 )
 
 //
@@ -39,7 +41,7 @@ func makeLogger(prefix string) *log.Logger {
 	return log.New(os.Stdout, prefixWithSeparator, flags)
 }
 
-func NewStandardLogger() StandardLogger {
+func NewStandardLogger() domain.LogProvider {
 	return StandardLogger{
 		DebugLogger: makeLogger("DEBUG"),
 		InfoLogger:  makeLogger("INFO"),
