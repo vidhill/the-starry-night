@@ -44,54 +44,60 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func Test_valid_request(t *testing.T) {
+func Test(t *testing.T) {
 
-	response, err := http.Get(baseUrl + "/iss-position?lat=51.89764968941597&long=-8.46828736406348")
+	t.Run("valid_request", func(t *testing.T) {
 
-	if err != nil {
-		log.Println("Error fetching", err.Error())
-		assert.FailNow(t, err.Error())
-	}
+		response, err := http.Get(baseUrl + "/iss-position?lat=51.89764968941597&long=-8.46828736406348")
 
-	assertStatusCode(t, http.StatusOK, response)
+		if err != nil {
+			log.Println("Error fetching", err.Error())
+			assert.FailNow(t, err.Error())
+		}
 
-	contentTypeHeaders := response.Header.Values("Content-type")
+		assertStatusCode(t, http.StatusOK, response)
 
-	assert.Len(t, contentTypeHeaders, 1)
-	assert.Equal(t, "application/json", contentTypeHeaders[0])
+		contentTypeHeaders := response.Header.Values("Content-type")
 
-	validResponseSchema := schema.Map{
-		"iss_overhead": schema.IsBool,
-	}
+		assert.Len(t, contentTypeHeaders, 1)
+		assert.Equal(t, "application/json", contentTypeHeaders[0])
 
-	assertUtils.MatchesJSONSchema(t, validResponseSchema, response.Body)
+		validResponseSchema := schema.Map{
+			"iss_overhead": schema.IsBool,
+		}
 
-}
+		assertUtils.MatchesJSONSchema(t, validResponseSchema, response.Body)
 
-func Test_invalid_request(t *testing.T) {
-	response, err := http.Get(baseUrl + "/iss-position")
+	})
 
-	if err != nil {
-		log.Println("Error fetching", err.Error())
-		assert.FailNow(t, err.Error())
-	}
+	t.Run("invalid_request", func(t *testing.T) {
+		response, err := http.Get(baseUrl + "/iss-position")
 
-	assertStatusCode(t, http.StatusBadRequest, response)
-}
+		if err != nil {
+			log.Println("Error fetching", err.Error())
+			assert.FailNow(t, err.Error())
+		}
 
-func Test_invalid_request_out_range_lat_long(t *testing.T) {
-	response, err := http.Get(baseUrl + "/iss-position?lat=100&long=-8")
+		assertStatusCode(t, http.StatusBadRequest, response)
 
-	if err != nil {
-		log.Println("Error fetching", err.Error())
-		assert.FailNow(t, err.Error())
-	}
+	})
 
-	assertStatusCode(t, http.StatusBadRequest, response)
+	t.Run("Test_invalid_request_out_range_lat_long", func(t *testing.T) {
 
+		response, err := http.Get(baseUrl + "/iss-position?lat=100&long=-8")
+
+		if err != nil {
+			log.Println("Error fetching", err.Error())
+			assert.FailNow(t, err.Error())
+		}
+
+		assertStatusCode(t, http.StatusBadRequest, response)
+
+	})
 }
 
 func assertStatusCode(t *testing.T, expected int, response *http.Response) {
+	t.Helper()
 	if response == nil {
 		assert.FailNow(t, "no http.Response pointer was passed to assertion")
 		return
