@@ -10,7 +10,7 @@ import (
 
 func main() {
 	configService := service.NewViperConfig()
-	loggerService := service.NewStandardLogger()
+	loggerService := service.NewStandardLogger(configService)
 	httpService := service.NewDefaultHttpClient(loggerService)
 
 	cliArgs := os.Args[1:]
