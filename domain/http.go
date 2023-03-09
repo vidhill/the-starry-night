@@ -2,6 +2,6 @@ package domain
 
 import "net/http"
 
-type HttpRepository interface {
+type HttpProvider interface {
 	Get(url string) (*http.Response, error)
 }

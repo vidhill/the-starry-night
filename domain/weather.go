@@ -13,6 +13,6 @@ type WeatherResult struct {
 	ObserverationTime time.Time
 }
 
-type WeatherRepository interface {
+type WeatherProvider interface {
 	GetCurrent(position model.Coordinates) (WeatherResult, error)
 }
