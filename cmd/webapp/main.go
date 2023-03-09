@@ -21,7 +21,7 @@ func main() {
 
 	// wiring
 	configService := service.NewViperConfig()
-	loggerService := service.NewStandardLogger()
+	loggerService := service.NewStandardLogger(configService)
 
 	configErr := validateEnvVariables(configService)
 	if configErr != nil {
