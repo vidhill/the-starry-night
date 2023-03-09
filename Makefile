@@ -40,9 +40,9 @@ test.ci:
 
 test.integration:
   ifneq (, $(shell richgo version))
-		richgo test $(INTEGRATION_TESTS)
+		richgo test -v -count=1 $(INTEGRATION_TESTS)
   else
-		go test $(INTEGRATION_TESTS)
+		go test -v -count=1 $(INTEGRATION_TESTS)
   endif
 
 setup-git-hooks:

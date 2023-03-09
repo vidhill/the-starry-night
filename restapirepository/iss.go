@@ -13,10 +13,10 @@ import (
 )
 
 type ISSLocationRepositoryRest struct {
-	Config      domain.ConfigRepository
-	Http        domain.HttpRepository
+	Config      domain.ConfigProvider
+	Http        domain.HttpProvider
 	LocalConfig LocalConfig
-	Logger      domain.LoggerRepository
+	Logger      domain.LogProvider
 }
 
 type LocalConfig struct {
@@ -49,10 +49,8 @@ func (s ISSLocationRepositoryRest) GetCurrentLocation() (model.Coordinates, erro
 	}
 
 	result := ApiResponse{}
-	decodeErr := json.NewDecoder(response.Body).Decode(&result)
-
-	if decodeErr != nil {
-		logger.Error("Error decoding", decodeErr.Error())
+	if err := json.NewDecoder(response.Body).Decode(&result); err != nil {
+		logger.Error("Error decoding", err.Error())
 		return emptyResult, err
 	}
 
@@ -63,14 +61,8 @@ func (s ISSLocationRepositoryRest) GetCurrentLocation() (model.Coordinates, erro
 	return s.SummarizeResponse(result)
 }
 
-//
 // Repository 'Constructor' function
-//
-func NewISSRepositoryRest(
-	config domain.ConfigRepository,
-	http domain.HttpRepository,
-	logger domain.LoggerRepository,
-) ISSLocationRepositoryRest {
+func NewISSRepositoryRest(config domain.ConfigProvider, http domain.HttpProvider, logger domain.LogProvider) ISSLocationRepositoryRest {
 
 	localConfig := LocalConfig{
 		url: config.GetString("ISS_API_URL"),

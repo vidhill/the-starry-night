@@ -10,39 +10,31 @@ import (
 	"github.com/vidhill/the-starry-night/utils"
 )
 
-type ISSVisibleService interface {
-	GetISSVisible(now time.Time, coordinates model.Coordinates) (ISSVisibleResult, error)
-}
-
-// swagger:model ISSResult
-type ISSVisibleResult struct {
-	ISSOverhead bool `json:"iss_overhead"`
+type ISSVisibleProvider interface {
+	GetISSVisible(now time.Time, coordinates model.Coordinates) (domain.ISSVisibleResult, error)
 }
 
 type DefaultISSVisibleService struct {
-	Config      ConfigService
-	Logger      LoggerService
-	ISSLocation ISSLocationService
-	Weather     WeatherService
+	Config      domain.ConfigProvider
+	Logger      domain.LogProvider
+	ISSLocation domain.ISSLocationProvider
+	Weather     domain.WeatherProvider
 }
 
-func (s DefaultISSVisibleService) GetISSVisible(now time.Time, coordinates model.Coordinates) (ISSVisibleResult, error) {
+func (s DefaultISSVisibleService) GetISSVisible(now time.Time, coordinates model.Coordinates) (domain.ISSVisibleResult, error) {
 	ISSlocation, weatherResult, err := s.CallAPIsParallel(coordinates)
 
 	if err != nil {
-		return ISSVisibleResult{}, err
+		return domain.ISSVisibleResult{}, err
 	}
 
 	cloudCoverThreshold := s.Config.GetInt("CLOUD_COVER_THRESHOLD")
 	accuracyNumDecimalPlaces := uint(s.Config.GetInt("ACCURACY_NUM_DECIMAL_PLACES"))
 
-	res := ISSVisibleResult{
-		ISSOverhead: CheckISSVisible(
-			coordinates,
-			ISSlocation,
-			weatherResult,
-			cloudCoverThreshold,
-			accuracyNumDecimalPlaces),
+	issOverhead := CheckISSVisible(coordinates, ISSlocation, weatherResult, cloudCoverThreshold, accuracyNumDecimalPlaces)
+
+	res := domain.ISSVisibleResult{
+		ISSOverhead: issOverhead,
 	}
 
 	return res, nil
@@ -98,7 +90,7 @@ func (h DefaultISSVisibleService) CallAPIsParallel(coordinates model.Coordinates
 	return ISSlocation, weatherResult, nil
 }
 
-func NewISSVisibleService(config ConfigService, logger LoggerService, iss ISSLocationService, weather WeatherService) ISSVisibleService {
+func NewISSVisibleService(config domain.ConfigProvider, logger domain.LogProvider, iss domain.ISSLocationProvider, weather domain.WeatherProvider) ISSVisibleProvider {
 	return DefaultISSVisibleService{
 		Config:      config,
 		Logger:      logger,
@@ -110,7 +102,7 @@ func NewISSVisibleService(config ConfigService, logger LoggerService, iss ISSLoc
 func CheckISSVisible(position, ISSPosition model.Coordinates, weatherResult domain.WeatherResult, cloudCoverThreshold int, precision uint) bool {
 
 	// if it's not night will not be visible
-	if !utils.DetermineIsNight(weatherResult.ObserverationTime, weatherResult.Sunrise, weatherResult.Sunset) {
+	if !utils.DetermineIsNight(weatherResult.DaylightTimes.Observation, weatherResult.DaylightTimes) {
 		return false
 	}
 

@@ -3,16 +3,15 @@ package main
 import (
 	"os"
 
-	"github.com/vidhill/the-starry-night/domain"
 	"github.com/vidhill/the-starry-night/model"
 	rest_api_repository "github.com/vidhill/the-starry-night/restapirepository"
 	"github.com/vidhill/the-starry-night/service"
 )
 
 func main() {
-	configService := service.NewConfigService(domain.NewViperConfig())
-	loggerService := service.NewLoggerService(domain.NewStandardLogger(), configService.GetString("LOG_LEVEL"))
-	httpService := service.NewHttpService(domain.NewDefaultHttpClient(loggerService))
+	configService := service.NewViperConfig()
+	loggerService := service.NewStandardLogger(configService)
+	httpService := service.NewDefaultHttpClient(loggerService)
 
 	cliArgs := os.Args[1:]
 
@@ -25,11 +24,9 @@ func main() {
 	switch cliArgs[0] {
 	case "iss":
 		{
-			ISSRepository := rest_api_repository.NewISSRepositoryRest(configService, httpService, loggerService)
+			ISSService := rest_api_repository.NewISSRepositoryRest(configService, httpService, loggerService)
 
-			issService := service.NewISSLocationService(ISSRepository)
-
-			res, err := issService.GetCurrentLocation()
+			res, err := ISSService.GetCurrentLocation()
 			if err != nil {
 				loggerService.Error(err.Error())
 				return
@@ -38,8 +35,7 @@ func main() {
 		}
 	case "weather":
 		{
-			weatherRepository := rest_api_repository.NewWeatherbitRepository(configService, httpService, loggerService)
-			weatherService := service.NewWeatherService(weatherRepository)
+			weatherService := rest_api_repository.NewWeatherbitRepository(configService, httpService, loggerService)
 
 			res, err := weatherService.GetCurrent(model.Coordinates{Latitude: 51.89764968941597, Longitude: -8.46828736406348})
 			if err != nil {

@@ -1,6 +1,6 @@
 package domain
 
-type ConfigRepository interface {
+type ConfigProvider interface {
 	GetString(string) string
 	GetBool(string) bool
 	GetInt(string) int

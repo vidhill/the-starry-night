@@ -7,10 +7,11 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
+
 	"github.com/vidhill/the-starry-night/domain"
 	"github.com/vidhill/the-starry-night/handlers"
 	"github.com/vidhill/the-starry-night/middleware"
-	rest_api_repository "github.com/vidhill/the-starry-night/restapirepository"
+	"github.com/vidhill/the-starry-night/restapirepository"
 	"github.com/vidhill/the-starry-night/service"
 )
 
@@ -19,8 +20,8 @@ const SWAGGER_ROOT = "swagger-ui"
 func main() {
 
 	// wiring
-	configService := service.NewConfigService(domain.NewViperConfig())
-	loggerService := service.NewLoggerService(domain.NewStandardLogger(), configService.GetString("LOG_LEVEL"))
+	configService := service.NewViperConfig()
+	loggerService := service.NewStandardLogger(configService)
 
 	configErr := validateEnvVariables(configService)
 	if configErr != nil {
@@ -28,19 +29,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	httpService := service.NewHttpService(domain.NewDefaultHttpClient(loggerService))
+	httpService := service.NewDefaultHttpClient(loggerService)
 
-	ISSRepository := rest_api_repository.NewISSRepositoryRest(configService, httpService, loggerService)
-	weatherRepository := rest_api_repository.NewWeatherbitRepository(configService, httpService, loggerService)
+	issService := restapirepository.NewISSRepositoryRest(configService, httpService, loggerService)
+	weatherService := restapirepository.NewWeatherbitRepository(configService, httpService, loggerService)
 
-	ISSService := service.NewISSLocationService(ISSRepository)
-	weatherService := service.NewWeatherService(weatherRepository)
-
-	ISSVisibleService := service.NewISSVisibleService(configService, loggerService, ISSService, weatherService)
+	issVisibleService := service.NewISSVisibleService(configService, loggerService, issService, weatherService)
 	// custom middleware to log using the wrapped logger service
 	customLogMiddleware := middleware.MakeMyLoggerMiddleware(loggerService)
 
-	dh := handlers.NewHandlers(loggerService, ISSVisibleService)
+	dh := handlers.NewHandlers(loggerService, issVisibleService)
 
 	mux := chi.NewRouter()
 
@@ -87,12 +85,12 @@ func main() {
 	}
 }
 
-func validateEnvVariables(config service.ConfigService) error {
+func validateEnvVariables(config domain.ConfigProvider) error {
 	cloudCoverThreshold := config.GetInt("CLOUD_COVER_THRESHOLD")
 	apiKey := config.GetString("WEATHER_BIT_API_KEY")
 
 	if apiKey == "" {
-		return errors.New("required environment varible for WEATHER_BIT_API_KEY is not set")
+		return errors.New("required environment variable for WEATHER_BIT_API_KEY is not set")
 	}
 
 	if cloudCoverThreshold == 0 || cloudCoverThreshold < 0 {

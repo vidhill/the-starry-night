@@ -1,8 +1,18 @@
-package domain
+package service
 
 import (
 	"log"
 	"os"
+
+	"github.com/vidhill/the-starry-night/domain"
+)
+
+const (
+	ERROR = iota
+	WARN
+	INFO
+	DEBUG
+	TRACE
 )
 
 //
@@ -12,6 +22,7 @@ import (
 const flags = log.LstdFlags
 
 type StandardLogger struct {
+	logLevel    int
 	DebugLogger *log.Logger
 	InfoLogger  *log.Logger
 	WarnLogger  *log.Logger
@@ -19,19 +30,27 @@ type StandardLogger struct {
 }
 
 func (l StandardLogger) Debug(v ...interface{}) {
-	l.DebugLogger.Println(v...)
+	if l.logLevel > DEBUG {
+		l.DebugLogger.Println(v...)
+	}
 }
 
 func (l StandardLogger) Info(v ...interface{}) {
-	l.InfoLogger.Println(v...)
+	if l.logLevel > INFO {
+		l.InfoLogger.Println(v...)
+	}
 }
 
 func (l StandardLogger) Warn(v ...interface{}) {
-	l.WarnLogger.Println(v...)
+	if l.logLevel > WARN {
+		l.WarnLogger.Println(v...)
+	}
 }
 
 func (l StandardLogger) Error(v ...interface{}) {
-	l.ErrorLogger.Println(v...)
+	if l.logLevel > ERROR {
+		l.ErrorLogger.Println(v...)
+	}
 }
 
 func makeLogger(prefix string) *log.Logger {
@@ -39,8 +58,26 @@ func makeLogger(prefix string) *log.Logger {
 	return log.New(os.Stdout, prefixWithSeparator, flags)
 }
 
-func NewStandardLogger() StandardLogger {
+func NewStandardLogger(c domain.ConfigProvider) domain.LogProvider {
+
+	loglevel := c.GetString("LOG_LEVEL")
+
+	levels := map[string]int{
+		"DEBUG": DEBUG,
+		"INFO":  INFO,
+		"WARN":  WARN,
+		"ERROR": ERROR,
+	}
+
+	level, ok := levels[loglevel]
+
+	// fallback to info level if misconfigured
+	if !ok {
+		level = INFO
+	}
+
 	return StandardLogger{
+		logLevel:    level + 1,
 		DebugLogger: makeLogger("DEBUG"),
 		InfoLogger:  makeLogger("INFO"),
 		WarnLogger:  makeLogger("WARN"),

@@ -7,38 +7,41 @@ import (
 	"github.com/vidhill/the-starry-night/utils"
 )
 
-//TODO move these tests elsewhere as are testing two different domains
-//
-func Test_DetermineIsNight_1(t *testing.T) {
-	observerationTime, sunriseTime, sunsetTime, err := determineTimes("2017-08-28 16:45", "10:44", "23:47")
-	assert.Nil(t, err)
+// TODO move these tests elsewhere as are testing two different domains
 
-	res := utils.DetermineIsNight(observerationTime, sunriseTime, sunsetTime)
-	assert.False(t, res)
-}
+func Test_DetermineIsNight(t *testing.T) {
 
-func Test_DetermineIsNight_2(t *testing.T) {
-	observerationTime, sunriseTime, sunsetTime, err := determineTimes("2017-08-28 23:49", "10:44", "23:47")
-	assert.Nil(t, err)
+	t.Run("A", func(t *testing.T) {
 
-	res := utils.DetermineIsNight(observerationTime, sunriseTime, sunsetTime)
-	assert.True(t, res)
-}
+		r, err := determineTimes("2017-08-28 16:45", "10:44", "23:47")
+		assert.Nil(t, err)
 
-func Test_DetermineIsNight_3(t *testing.T) {
-	observerationTime, sunriseTime, sunsetTime, err := determineTimes("2017-08-28 08:49", "10:44", "23:47")
-	assert.Nil(t, err)
+		res := utils.DetermineIsNight(r.Observation, r)
+		assert.False(t, res)
+	})
 
-	res := utils.DetermineIsNight(observerationTime, sunriseTime, sunsetTime)
-	assert.True(t, res)
-}
+	t.Run("B", func(t *testing.T) {
+		r, err := determineTimes("2017-08-28 23:49", "10:44", "23:47")
+		assert.Nil(t, err)
 
-func Test_DetermineIsNight_4(t *testing.T) {
-	observerationTime, sunriseTime, sunsetTime, err := determineTimes("2017-08-28 10:43", "10:44", "23:47")
-	assert.Nil(t, err)
+		res := utils.DetermineIsNight(r.Observation, r)
+		assert.True(t, res)
+	})
+	t.Run("C", func(t *testing.T) {
+		r, err := determineTimes("2017-08-28 08:49", "10:44", "23:47")
+		assert.Nil(t, err)
 
-	res := utils.DetermineIsNight(observerationTime, sunriseTime, sunsetTime)
-	assert.True(t, res)
+		res := utils.DetermineIsNight(r.Observation, r)
+		assert.True(t, res)
+	})
+
+	t.Run("D", func(t *testing.T) {
+		r, err := determineTimes("2017-08-28 10:43", "10:44", "23:47")
+		assert.Nil(t, err)
+
+		res := utils.DetermineIsNight(r.Observation, r)
+		assert.True(t, res)
+	})
 }
 
 func Test_extractDateString(t *testing.T) {

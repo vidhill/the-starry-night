@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/vidhill/the-starry-night/service"
+	"github.com/vidhill/the-starry-night/domain"
 	"github.com/vidhill/the-starry-night/utils"
 )
 
@@ -19,8 +19,8 @@ var (
 )
 
 type Handlers struct {
-	Logger            service.LoggerService
-	ISSVisibleService service.ISSVisibleService
+	Logger            domain.LogProvider
+	ISSVisibleService domain.ISSVisibleProvider
 }
 
 // swagger:parameters ISSRequest
@@ -100,10 +100,7 @@ func (h Handlers) ISSPosition(w http.ResponseWriter, req *http.Request) {
 	w.Write(bs)
 }
 
-func NewHandlers(
-	logger service.LoggerService,
-	ISSVisible service.ISSVisibleService,
-) Handlers {
+func NewHandlers(logger domain.LogProvider, ISSVisible domain.ISSVisibleProvider) Handlers {
 
 	return Handlers{
 		Logger:            logger,

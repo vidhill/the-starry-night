@@ -16,9 +16,7 @@ func (mock *ISS) GetCurrentLocation() (model.Coordinates, error) {
 	return result.(model.Coordinates), err
 }
 
-//
 // Repository 'Constructor' function
-//
 func NewMockISSRepository() ISS {
 	return ISS{}
 }
