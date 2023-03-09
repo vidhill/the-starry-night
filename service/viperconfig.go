@@ -1,9 +1,10 @@
-package domain
+package service
 
 import (
 	"fmt"
 
 	"github.com/spf13/viper"
+	"github.com/vidhill/the-starry-night/domain"
 )
 
 type ConfigViperRepository struct {
@@ -22,7 +23,7 @@ func (c ConfigViperRepository) GetInt(s string) int {
 	return c.Registry.GetInt(s)
 }
 
-func NewViperConfig() ConfigViperRepository {
+func NewViperConfig() domain.ConfigProvider {
 
 	registry := viper.New()
 
