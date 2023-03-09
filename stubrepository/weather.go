@@ -6,7 +6,7 @@ import (
 )
 
 type WeatherStubRepository struct {
-	logger     domain.LoggerRepository
+	logger     domain.LogProvider
 	mockResult domain.WeatherResult
 }
 
@@ -14,7 +14,7 @@ func (s WeatherStubRepository) GetCurrent(location model.Coordinates) (domain.We
 	return s.mockResult, nil
 }
 
-func NewStubWeatherRepository(logger domain.LoggerRepository, mockResult domain.WeatherResult) WeatherStubRepository {
+func NewStubWeatherRepository(logger domain.LogProvider, mockResult domain.WeatherResult) domain.WeatherProvider {
 	return WeatherStubRepository{
 		logger:     logger,
 		mockResult: mockResult,

@@ -18,10 +18,10 @@ var (
 	dateRegex = regexp.MustCompile("^[0-9-]+")
 )
 
-type WeatherbitRepository struct {
-	Config      domain.ConfigRepository
-	Logger      domain.LoggerRepository
-	Http        domain.HttpRepository
+type WeatherbitService struct {
+	Config      domain.ConfigProvider
+	Logger      domain.LogProvider
+	Http        domain.HttpProvider
 	LocalConfig LocalWeatherConfig
 }
 
@@ -43,7 +43,7 @@ type InterestedData struct {
 	ObTime  string `json:"ob_time"`
 }
 
-func (s WeatherbitRepository) GetCurrent(location model.Coordinates) (domain.WeatherResult, error) {
+func (s WeatherbitService) GetCurrent(location model.Coordinates) (domain.WeatherResult, error) {
 
 	localConfig := s.LocalConfig
 	logger := s.Logger
@@ -82,10 +82,8 @@ func (s WeatherbitRepository) GetCurrent(location model.Coordinates) (domain.Wea
 
 }
 
-//
 // Repository 'Constructor' function
-//
-func NewWeatherbitRepository(config domain.ConfigRepository, http domain.HttpRepository, logger domain.LoggerRepository) WeatherbitRepository {
+func NewWeatherbitRepository(config domain.ConfigProvider, http domain.HttpProvider, logger domain.LogProvider) WeatherbitService {
 
 	apiKey := config.GetString("WEATHER_BIT_API_KEY")
 	baseurl := config.GetString("WEATHER_BIT_API_BASE_URL")
@@ -95,7 +93,7 @@ func NewWeatherbitRepository(config domain.ConfigRepository, http domain.HttpRep
 		ApiKey:            apiKey,
 	}
 
-	return WeatherbitRepository{
+	return WeatherbitService{
 		Config:      config,
 		Logger:      logger,
 		Http:        http,
@@ -107,7 +105,7 @@ func NewWeatherbitRepository(config domain.ConfigRepository, http domain.HttpRep
 // Helpers
 //
 
-func (s WeatherbitRepository) SummarizeResponse(res CurrentWeatherResponse) (domain.WeatherResult, error) {
+func (s WeatherbitService) SummarizeResponse(res CurrentWeatherResponse) (domain.WeatherResult, error) {
 	emptyResult := domain.WeatherResult{}
 	if len(res.Data) != 1 {
 		return emptyResult, errors.New("expected only one response")
@@ -116,17 +114,19 @@ func (s WeatherbitRepository) SummarizeResponse(res CurrentWeatherResponse) (dom
 	// we are only requesting one item from the api
 	data := res.Data[0]
 
-	observerationTime, sunriseTime, sunsetTime, err := determineTimes(data.ObTime, data.Sunrise, data.Sunset)
+	r, err := determineTimes(data.ObTime, data.Sunrise, data.Sunset)
 
 	if err != nil {
 		return emptyResult, err
 	}
 
 	result := domain.WeatherResult{
-		CloudCover:        data.Clouds,
-		ObserverationTime: observerationTime,
-		Sunrise:           sunriseTime,
-		Sunset:            sunsetTime,
+		CloudCover: data.Clouds,
+		DaylightTimes: model.DaylightTimes{
+			Observation: r.Observation,
+			Sunrise:     r.Sunrise,
+			Sunset:      r.Sunset,
+		},
 	}
 	return result, nil
 }
@@ -143,19 +143,20 @@ func makeQueryParams(location model.Coordinates, apiKey string) string {
 }
 
 // parse the time strings into go Time.time objects
-func determineTimes(observerationTimeSt, sunrise, sunset string) (time.Time, time.Time, time.Time, error) {
-	observerationTime, err := time.Parse("2006-01-02 15:04:05", appendZeroSeconds(observerationTimeSt))
+func determineTimes(observationTimeSt, sunrise, sunset string) (model.DaylightTimes, error) {
+	observationTime, err := time.Parse("2006-01-02 15:04:05", appendZeroSeconds(observationTimeSt))
 
 	if err != nil {
-		return time.Time{}, time.Time{}, time.Time{}, err
+		return model.DaylightTimes{}, err
 	}
 
-	datePrefix := extractDateString(observerationTimeSt)
+	datePrefix := extractDateString(observationTimeSt)
 
-	sunriseTime := getTimeOnDate(datePrefix, sunrise)
-	sunsetTime := getTimeOnDate(datePrefix, sunset)
-
-	return observerationTime, sunriseTime, sunsetTime, nil
+	return model.DaylightTimes{
+		Observation: observationTime,
+		Sunrise:     getTimeOnDate(datePrefix, sunrise),
+		Sunset:      getTimeOnDate(datePrefix, sunset),
+	}, nil
 }
 
 func extractDateString(date string) string {

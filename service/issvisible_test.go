@@ -91,7 +91,6 @@ func Test_GetISSVisible_error(t *testing.T) {
 }
 
 // exact position match scenarios
-//
 func Test_CheckISSVisible(t *testing.T) {
 
 	loc := model.Coordinates{
@@ -190,25 +189,27 @@ func Test_CheckISSVisible_overcast_night(t *testing.T) {
 
 func makeMockClearNightResult() domain.WeatherResult {
 	return domain.WeatherResult{
-		CloudCover:        10,
-		ObserverationTime: timeFromString("02 Jan 06 06:04 MST"),
-		Sunrise:           timeFromString("02 Jan 06 08:00 MST"),
-		Sunset:            timeFromString("02 Jan 06 22:00 MST"),
+		CloudCover: 10,
+		DaylightTimes: model.DaylightTimes{
+			Observation: timeFromString("02 Jan 06 06:04 MST"),
+			Sunrise:     timeFromString("02 Jan 06 08:00 MST"),
+			Sunset:      timeFromString("02 Jan 06 22:00 MST"),
+		},
 	}
 }
 
 func makeMockOvercastNightResult() domain.WeatherResult {
 	return domain.WeatherResult{
-		CloudCover:        100,
-		ObserverationTime: timeFromString("02 Jan 06 06:04 MST"),
-		Sunrise:           timeFromString("02 Jan 06 08:00 MST"),
-		Sunset:            timeFromString("02 Jan 06 22:00 MST"),
+		CloudCover: 100,
+		DaylightTimes: model.DaylightTimes{
+			Observation: timeFromString("02 Jan 06 06:04 MST"),
+			Sunrise:     timeFromString("02 Jan 06 08:00 MST"),
+			Sunset:      timeFromString("02 Jan 06 22:00 MST"),
+		},
 	}
 }
 
 // helpers
-//
-//
 func timeFromString(s string) time.Time {
 	t, _ := time.Parse(time.RFC822, s)
 	return t
@@ -217,26 +218,20 @@ func timeFromString(s string) time.Time {
 func makeMockClearDayResult() domain.WeatherResult {
 
 	return domain.WeatherResult{
-		CloudCover:        10,
-		ObserverationTime: timeFromString("02 Jan 06 10:00 MST"),
-		Sunrise:           timeFromString("02 Jan 06 08:00 MST"),
-		Sunset:            timeFromString("02 Jan 06 22:00 MST"),
+		CloudCover: 10,
+		DaylightTimes: model.DaylightTimes{
+			Observation: timeFromString("02 Jan 06 10:00 MST"),
+			Sunrise:     timeFromString("02 Jan 06 08:00 MST"),
+			Sunset:      timeFromString("02 Jan 06 22:00 MST"),
+		},
 	}
 }
 
-func makeService(
-	mockConfig *mocks.Config,
-	mockISS *mocks.ISS,
-	mockWeather *mocks.Weather,
-) service.ISSVisibleService {
+func makeService(mockConfig *mocks.Config, mockISS *mocks.ISS, mockWeather *mocks.Weather) domain.ISSVisibleProvider {
 
-	stubLogger := service.NewLoggerService(stubrepository.NewStubLogger(), "INFO")
+	stubLogger := stubrepository.NewStubLogger()
 
-	configService := service.NewConfigService(mockConfig)
-	ISSService := service.NewISSLocationService(mockISS)
-	weatherService := service.NewWeatherService(mockWeather)
-
-	ISSVisibleService := service.NewISSVisibleService(configService, stubLogger, ISSService, weatherService)
+	ISSVisibleService := service.NewISSVisibleService(mockConfig, stubLogger, mockISS, mockWeather)
 
 	return ISSVisibleService
 }

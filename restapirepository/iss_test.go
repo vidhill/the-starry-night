@@ -15,63 +15,66 @@ import (
 	"github.com/vidhill/the-starry-night/stubrepository"
 )
 
-func Test_GetCurrentLocation_happy_path(t *testing.T) {
+func Test_GetCurrentLocation(t *testing.T) {
 
-	mockHttp := mocks.NewMockHTTP()
-	config, logger, _ := createStubs()
+	t.Run("happy_path", func(t *testing.T) {
 
-	mockJSON := `
-	{
-		"message": "success",
-		"iss_position": {
-			"latitude": "19.2243",
-			"longitude": "-32.4257"
-		},
-		"timestamp": 1652732569
-	}	
-	`
+		mockHttp := mocks.NewMockHTTP()
+		config, logger, _ := createStubs()
 
-	mockResponse := http.Response{
-		StatusCode: http.StatusOK,
-		Body:       makeMockReadCloser(mockJSON),
-	}
+		mockJSON := `
+		{
+			"message": "success",
+			"iss_position": {
+				"latitude": "19.2243",
+				"longitude": "-32.4257"
+			},
+			"timestamp": 1652732569
+		}	
+		`
 
-	mockHttp.On("Get", mock.AnythingOfType("string")).Return(&mockResponse, nil)
+		mockResponse := http.Response{
+			StatusCode: http.StatusOK,
+			Body:       makeMockReadCloser(mockJSON),
+		}
 
-	instance := NewISSRepositoryRest(&config, &mockHttp, &logger)
+		mockHttp.On("Get", mock.AnythingOfType("string")).Return(&mockResponse, nil)
 
-	res, err := instance.GetCurrentLocation()
+		instance := NewISSRepositoryRest(&config, &mockHttp, &logger)
 
-	mockHttp.AssertExpectations(t)
+		res, err := instance.GetCurrentLocation()
 
-	assert.Nil(t, err)
+		mockHttp.AssertExpectations(t)
 
-	assert.Equal(t, float64(19.2243), res.Latitude)
-	assert.Equal(t, float64(-32.4257), res.Longitude)
+		assert.Nil(t, err)
 
-}
+		assert.Equal(t, float64(19.2243), res.Latitude)
+		assert.Equal(t, float64(-32.4257), res.Longitude)
 
-func Test_GetCurrentLocation_bad_request(t *testing.T) {
+	})
 
-	mockHttp := mocks.NewMockHTTP()
-	config, logger, _ := createStubs()
+	t.Run("bad_request", func(t *testing.T) {
 
-	mockResponse := http.Response{
-		StatusCode: http.StatusBadRequest,
-	}
+		mockHttp := mocks.NewMockHTTP()
+		config, logger, _ := createStubs()
 
-	mockHttp.On("Get", mock.AnythingOfType("string")).Return(&mockResponse, nil)
+		mockResponse := http.Response{
+			StatusCode: http.StatusBadRequest,
+		}
 
-	instance := NewISSRepositoryRest(&config, &mockHttp, &logger)
+		mockHttp.On("Get", mock.AnythingOfType("string")).Return(&mockResponse, nil)
 
-	_, err := instance.GetCurrentLocation()
+		instance := NewISSRepositoryRest(&config, &mockHttp, &logger)
 
-	mockHttp.AssertExpectations(t)
+		_, err := instance.GetCurrentLocation()
 
-	assert.NotNil(t, err)
+		mockHttp.AssertExpectations(t)
 
-	unexpectedResponseError := customErrors.UnexpectedResponseError{}
-	assert.ErrorAs(t, err, &unexpectedResponseError)
+		assert.NotNil(t, err)
+
+		unexpectedResponseError := customErrors.UnexpectedResponseError{}
+		assert.ErrorAs(t, err, &unexpectedResponseError)
+	})
 
 }
 

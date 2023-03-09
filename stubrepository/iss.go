@@ -6,7 +6,7 @@ import (
 )
 
 type ISSLocationRepositoryStub struct {
-	logger domain.LoggerRepository
+	logger domain.LogProvider
 }
 
 func (s ISSLocationRepositoryStub) GetCurrentLocation() (model.Coordinates, error) {
@@ -19,10 +19,8 @@ func (s ISSLocationRepositoryStub) GetCurrentLocation() (model.Coordinates, erro
 	return result, nil
 }
 
-//
 // Repository 'Constructor' function
-//
-func NewISSRepositoryStub(logger domain.LoggerRepository) ISSLocationRepositoryStub {
+func NewISSRepositoryStub(logger domain.LogProvider) domain.ISSLocationProvider {
 
 	return ISSLocationRepositoryStub{
 		logger: logger,
